@@ -1,11 +1,14 @@
-import { Profile } from "./pages/Profile"
+// import { Profile } from "./pages/Profile"
+
+import { Register } from "./pages/Register"
 
 function App() {
 
 
   return (
     <>
-      <Profile/>
+      {/* <Profile/> */}
+      <Register/>
     </>
   )
 }
