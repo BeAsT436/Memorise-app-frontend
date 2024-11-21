@@ -28,6 +28,7 @@ export const Register: FC = () => {
     <div className="bg-amber-400 rounded-lg max-w-md p-8 w-full">
       <h2 className="text-3xl font-bold text-gray-700 mb-5">create account</h2>
       <form className="space-y-5" onSubmit={handleRegister}>
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <div>
           <label
             className="block text-sm font-medium text-gray-600 "
