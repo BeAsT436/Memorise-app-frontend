@@ -2,21 +2,11 @@ import { FC, useState } from "react";
 
 export const Login: FC = () => {
   const [email, setEmail] = useState("");
-  const [userEmail] = "test@mail.com"
-  const [accountPassword] = "123";
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email !== userEmail){
-        setError("user not found for this email")
-        return
-    }
-    if (password !== accountPassword){
-        setError("the password is incorrect")
-        return
-    }
     setError("")
     if (email == "test@mail.com" && password == "123") {
             console.log("use secsesfully login")
