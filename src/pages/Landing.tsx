@@ -16,7 +16,7 @@ export const Landing = () => {
           ratione at ab necessitatibus!{" "}
         </p>
         <div className="flex space-x-4 justify-center">
-            <Button variant={"secondary"}>get started</Button>
+            <Button variant={"secondary"}>get started(register)</Button>
             <Button variant={"secondary"}>sing in</Button>
         </div>
       </div>
