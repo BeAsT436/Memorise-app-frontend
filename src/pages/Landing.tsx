@@ -6,7 +6,7 @@ export const Landing = () => {
       <div className="absolute inset-0 bg-black opacity-40"></div>
       <div className="reletive px-6 md:px-12 max-w-7xl mx-auto">
         <div>
-          <img className="h-30 w-30 md:h-40 md:w-40 mx-auto rounded-full shadow-lg" src={logo} alt="logo" />
+          <img className="h-30 w-30 md:h-40 md:w-40 mx-auto rounded-full shadow-lg bg" src={logo} alt="logo" />
         </div>
         <h1 className="text-5xl md:text-6xl font-extrabold my-5 drop-shadow-lg">Save your Memorize </h1>
         <p className="text-lg md:text-xl max-w-2xl  ">
