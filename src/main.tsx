@@ -8,19 +8,21 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Profile } from './pages/Profile'
 import { Landing } from './pages/Landing'
+import { Public } from './components/Public'
+import { Private } from './components/Private'
 
 const router = createBrowserRouter([
   {
-    path:"/", element:<Landing/>
+    path:"/", element:<Public><Landing/></Public>
   },
   {
-    path:"/login", element:<Login/>
+    path:"/login", element:<Public><Login/></Public>
   },
   {
-    path:"/register", element:<Register/>
+    path:"/register", element:<Public><Register/></Public>
   },
   {
-    path:"/profile", element:<Profile/>
+    path:"/profile", element:<Private><Profile/></Private>
   }
 ])
 
