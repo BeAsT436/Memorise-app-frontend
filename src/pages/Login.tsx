@@ -1,45 +1,11 @@
-import { FC, useState } from "react";
+import { FC, } from "react";
+import { AuthForm } from "@/components/AuthForm";
 
 export const Login: FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("")
-    if (email == "test@mail.com" && password == "123") {
-            console.log("use secsesfully login")
-        
-    }
-  };
+ 
   return (
-    <div>
-      <h2>Login account</h2>
-      <form onSubmit={handleLogin}>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <div>
-          <label htmlFor="email">email</label>
-          <input
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            id="email"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">password</label>
-          <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            id="password"
-            required
-          />
-        </div>
-        <button>login</button>
-      </form>
+    <div className="justify-center flex items-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+      <AuthForm isLogin={true}/>
     </div>
   );
 };
