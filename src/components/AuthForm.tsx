@@ -71,7 +71,7 @@ export const AuthForm = ({ isLogin }: Props) => {
             <FormField
               name="username"
               control={form.control}
-              render={(field) => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
@@ -86,7 +86,7 @@ export const AuthForm = ({ isLogin }: Props) => {
           <FormField
             name="email"
             control={form.control}
-            render={(field) => (
+            render={({field}) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
@@ -100,7 +100,7 @@ export const AuthForm = ({ isLogin }: Props) => {
           <FormField
             name="password"
             control={form.control}
-            render={(field) => (
+            render={({field}) => (
               <FormItem>
                 <FormLabel>password</FormLabel>
                 <FormControl>
@@ -115,7 +115,7 @@ export const AuthForm = ({ isLogin }: Props) => {
             <FormField
               name="confirmPassword"
               control={form.control}
-              render={(field) => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>confirm Password</FormLabel>
                   <FormControl>
@@ -134,7 +134,7 @@ export const AuthForm = ({ isLogin }: Props) => {
       </Form>
 
       <div>
-        <p>{isLogin?"already have an account?":"dont have an account"}</p>
+        <p>{isLogin?"already have an account?":"dont have an account?"}</p>
         <Button onClick={()=>navigate(isLogin?"/register":"/login")} variant={"link"}>{isLogin?"register":"login"}</Button>
       </div>
     </div>
