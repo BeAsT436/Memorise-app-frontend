@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 export const Landing = () => {
   const navigate = useNavigate();
   return (
-    <div className="reletive bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 h-screen flex flex-col justify-center items-center text-white">
+    <div className="relative bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 h-screen flex flex-col justify-center items-center text-white">
       <div className="absolute inset-0 bg-black opacity-40"></div>
-      <div className="reletive px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="relative px-6 md:px-12 max-w-7xl mx-auto">
         <div>
           <img
             className="h-30 w-30 md:h-40 md:w-40 mx-auto rounded-full shadow-lg bg"
@@ -37,7 +37,6 @@ export const Landing = () => {
           <Button
             onClick={() => {
               navigate("/login");
-              console.log("win");
             }}
             size={"lg"}
             variant={"outline"}

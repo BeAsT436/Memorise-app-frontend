@@ -25,7 +25,7 @@ const loginSchema = z.object({
 
 const registerSchema = loginSchema
   .extend({
-    username: z
+    name: z
       .string()
       .min(3, { message: "username must be at least 3 characters" }),
     confirmPassword: z
@@ -47,7 +47,7 @@ export const AuthForm = ({ isLogin }: Props) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      username: "",
+      name: "",
       password: "",
       confirmPassword: "",
       email: "",
@@ -55,7 +55,26 @@ export const AuthForm = ({ isLogin }: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    if (!isLogin) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {confirmPassword, ...rest} = values as z.infer<typeof registerSchema>
+      values = rest
+    }
+
+    console.log(!isLogin ? "register data:":"login data:", values);
+
+    const fetchUrl = !isLogin ? "http://localhost:3001/api/auth/register":"http://localhost:3001/api/auth/login"
+
+    fetch(fetchUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response)=> response.json())
+      .then((data)=> console.log(data))
+
     form.reset();
   }
 
@@ -69,7 +88,7 @@ export const AuthForm = ({ isLogin }: Props) => {
         <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
           {!isLogin && (
             <FormField
-              name="username"
+              name="name"
               control={form.control}
               render={({field}) => (
                 <FormItem>
