@@ -12,6 +12,9 @@ import { Button } from "./ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
+import { useDispatch} from "react-redux";
+import { setUser } from "@/redux/authSlice";
+
 
 const loginSchema = z.object({
   email: z
@@ -41,6 +44,7 @@ type Props = { isLogin: boolean };
 
 export const AuthForm = ({ isLogin }: Props) => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const schema = isLogin ? loginSchema : registerSchema;
 
@@ -73,7 +77,7 @@ export const AuthForm = ({ isLogin }: Props) => {
       body: JSON.stringify(values),
     })
       .then((response)=> response.json())
-      .then((data)=> console.log(data))
+      .then((data)=> dispatch(setUser(data.user)))
 
     form.reset();
   }
