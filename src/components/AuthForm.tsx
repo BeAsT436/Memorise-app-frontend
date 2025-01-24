@@ -12,9 +12,8 @@ import { Button } from "./ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
-
 
 const loginSchema = z.object({
   email: z
@@ -43,8 +42,8 @@ const registerSchema = loginSchema
 type Props = { isLogin: boolean };
 
 export const AuthForm = ({ isLogin }: Props) => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const schema = isLogin ? loginSchema : registerSchema;
 
@@ -61,23 +60,31 @@ export const AuthForm = ({ isLogin }: Props) => {
   function onSubmit(values: z.infer<typeof schema>) {
     if (!isLogin) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {confirmPassword, ...rest} = values as z.infer<typeof registerSchema>
-      values = rest
+      const { confirmPassword, ...rest } = values as z.infer<
+        typeof registerSchema
+      >;
+      values = rest;
     }
 
-    console.log(!isLogin ? "register data:":"login data:", values);
+    console.log(!isLogin ? "register data:" : "login data:", values);
 
-    const fetchUrl = !isLogin ? "http://localhost:3001/api/auth/register":"http://localhost:3001/api/auth/login"
+    const fetchUrl = !isLogin
+      ? "http://localhost:3001/api/auth/register"
+      : "http://localhost:3001/api/auth/login";
 
     fetch(fetchUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     })
-      .then((response)=> response.json())
-      .then((data)=> dispatch(setUser(data.user)))
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        
+        dispatch(setUser(data));
+      });
 
     form.reset();
   }
@@ -94,7 +101,7 @@ export const AuthForm = ({ isLogin }: Props) => {
             <FormField
               name="name"
               control={form.control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
@@ -109,7 +116,7 @@ export const AuthForm = ({ isLogin }: Props) => {
           <FormField
             name="email"
             control={form.control}
-            render={({field}) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
@@ -123,7 +130,7 @@ export const AuthForm = ({ isLogin }: Props) => {
           <FormField
             name="password"
             control={form.control}
-            render={({field}) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>password</FormLabel>
                 <FormControl>
@@ -138,7 +145,7 @@ export const AuthForm = ({ isLogin }: Props) => {
             <FormField
               name="confirmPassword"
               control={form.control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>confirm Password</FormLabel>
                   <FormControl>
@@ -157,10 +164,14 @@ export const AuthForm = ({ isLogin }: Props) => {
       </Form>
 
       <div>
-        <p>{isLogin?"already have an account?":"dont have an account?"}</p>
-        <Button onClick={()=>navigate(isLogin?"/register":"/login")} variant={"link"}>{isLogin?"register":"login"}</Button>
+        <p>{isLogin ? "already have an account?" : "dont have an account?"}</p>
+        <Button
+          onClick={() => navigate(isLogin ? "/register" : "/login")}
+          variant={"link"}
+        >
+          {isLogin ? "register" : "login"}
+        </Button>
       </div>
     </div>
   );
 };
-

@@ -1,8 +1,11 @@
+import { selectAuthState } from "@/redux/authSlice";
 import { FC } from "react";
+import { useSelector } from "react-redux";
 
 export const Profile: FC = () => {
-    const name = "Yura"
-    const email = "123@gmail.com"
+  const {user} = useSelector(selectAuthState)
+  console.log(user);
+  
   return (
     
     <div  className="max-w-sm mx-auto bg-white rounded-lg">
@@ -13,8 +16,8 @@ export const Profile: FC = () => {
           alt=""
         />
         <div>
-            <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
-            <p className="text-gray-600">{email}</p>
+            <h2 className="text-xl font-semibold text-gray-800">{user?.name}</h2>
+            <p className="text-gray-600">{user?.email}</p>
         </div>
       </div>
     </div>

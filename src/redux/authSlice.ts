@@ -27,7 +27,9 @@ interface AuthState{
     isAuthenticated:boolean
 }
 interface ActionPayload{
-    token:string
+    token:{
+        token:string
+    }
     message:string
 }
 
@@ -41,15 +43,23 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action:PayloadAction<ActionPayload>)=>{
-            const user = parseJWT(action.payload.token)
+            const tokenString = action.payload.token.token
+            if(!tokenString){
+                state.user = null
+                state.isAuthenticated = false
+                return
+            }
+            const user = parseJWT(action.payload.token.token)
             if (user) {
                 state.user = user
                 state.isAuthenticated = true
-                localStorage.setItem("token", action.payload.token)
+                localStorage.setItem("token", action.payload.token.token)
             }
             else{
                 state.user = null
                 state.isAuthenticated = false
+                console.log("error");
+                
             }
         }
     }
