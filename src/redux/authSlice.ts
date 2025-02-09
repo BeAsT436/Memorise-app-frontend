@@ -26,10 +26,8 @@ interface AuthState{
     user:TUser|null,
     isAuthenticated:boolean
 }
-interface ActionPayload{
-    token:{
-        token:string
-    }
+interface ActionPayload{  
+    token:string
     message:string
 }
 
@@ -43,17 +41,18 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action:PayloadAction<ActionPayload>)=>{
-            const tokenString = action.payload.token.token
+            const tokenString = action.payload.token
             if(!tokenString){
                 state.user = null
                 state.isAuthenticated = false
                 return
             }
-            const user = parseJWT(action.payload.token.token)
+            // todo fix bakend responce
+            const user = parseJWT(action.payload.token)
             if (user) {
                 state.user = user
                 state.isAuthenticated = true
-                localStorage.setItem("token", action.payload.token.token)
+                localStorage.setItem("token", action.payload.token)
             }
             else{
                 state.user = null
@@ -61,10 +60,15 @@ const authSlice = createSlice({
                 console.log("error");
                 
             }
+        },
+        logout: (state)=>{
+            localStorage.removeItem("token")
+            state.user = null
+            state.isAuthenticated = false
         }
     }
 })
 
-export const {setUser} = authSlice.actions
+export const {setUser, logout} = authSlice.actions
 export const selectAuthState = (state:RootState)=>state.auth
 export default authSlice.reducer

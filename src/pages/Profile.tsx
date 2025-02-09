@@ -1,10 +1,16 @@
-import { selectAuthState } from "@/redux/authSlice";
+import { Button } from "@/components/ui/button";
+import { logout, selectAuthState } from "@/redux/authSlice";
+import { useAppDispatch } from "@/redux/store";
 import { FC } from "react";
 import { useSelector } from "react-redux";
 
 export const Profile: FC = () => {
   const {user} = useSelector(selectAuthState)
-  console.log(user);
+  const dispatch = useAppDispatch()
+  const handleLogout = ()=>{
+    dispatch(logout())
+  }
+
   
   return (
     
@@ -20,6 +26,8 @@ export const Profile: FC = () => {
             <p className="text-gray-600">{user?.email}</p>
         </div>
       </div>
+      {/* todo logout */}
+      <Button variant={"destructive"} onClick={handleLogout}>Logout</Button>
     </div>
   );
 };
