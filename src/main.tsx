@@ -10,6 +10,8 @@ import { Profile } from './pages/Profile'
 import { Landing } from './pages/Landing'
 import { Public } from './components/Public'
 import { Private } from './components/Private'
+import { Home } from './pages/Home'
+
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,9 @@ const router = createBrowserRouter([
   },
   {
     path:"/profile", element:<Private><Profile/></Private>
+  },
+  {
+    path:"/home", element:<Private><Home/></Private>
   }
 ])
 

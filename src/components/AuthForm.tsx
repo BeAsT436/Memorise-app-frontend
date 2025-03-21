@@ -82,7 +82,7 @@ export const AuthForm = ({ isLogin }: Props) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        
+
         dispatch(setUser(data));
       });
 
@@ -134,7 +134,11 @@ export const AuthForm = ({ isLogin }: Props) => {
               <FormItem>
                 <FormLabel>password</FormLabel>
                 <FormControl>
-                  <Input placeholder="enter your password" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="enter your password"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,7 +153,11 @@ export const AuthForm = ({ isLogin }: Props) => {
                 <FormItem>
                   <FormLabel>confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="confirm your password" {...field} />
+                    <Input
+                      type="password"
+                      placeholder="confirm your password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
