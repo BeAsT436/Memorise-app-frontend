@@ -1,12 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.png";
-import { selectMemoriesState } from "@/redux/memorySlice";
+import { fetchMemories, selectMemoriesState } from "@/redux/memorySlice";
+import { AppDispatch } from "@/redux/store";
+import { useEffect } from "react";
 export const Home = () => {
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>()
   const { memories } = useSelector(selectMemoriesState);
-// we need to fetch memories from api/memory GET
-// we need to send token to get memories
+  console.log(memories);
+  
+  
+  useEffect(()=>{
+    dispatch(fetchMemories())
+  },[dispatch])
+
   const defaultImg =
     "https://upload.wikimedia.org/wikipedia/commons/7/77/Pirogue_running_on_the_Mekong_at_golden_hour_between_Don_Det_and_Don_Khon_Laos.jpg";
 
