@@ -9,12 +9,11 @@ export interface Memory {
   desc: string;
   img: string;
 }
-export interface MemoryCreateDTO{
+export interface MemoryCreateDTO {
   title: string;
   desc: string;
   img: string;
 }
-
 
 const URL = "http://localhost:3001/api/memory";
 export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
@@ -57,14 +56,29 @@ export const addMemoryThunk = createAsyncThunk(
   }
 );
 
-const initialState: { memories: Memory[]; loading: boolean } = {
+const initialState: {
+  memoryForm: Memory | null;
+  memories: Memory[];
+  loading: boolean;
+} = {
   memories: [],
   loading: false,
+  memoryForm: null,
 };
 const memorySlice = createSlice({
   name: "memory",
   initialState,
-  reducers: {},
+  reducers: {
+    openForm: (state) => {
+      state.memoryForm = {} as Memory;
+    },
+    closeForm: (state) => {
+      state.memoryForm = null;
+    },
+    openEditForm: (state, action) => {
+      state.memoryForm = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMemories.fulfilled, (state, action) => {
@@ -84,6 +98,8 @@ const memorySlice = createSlice({
     });
   },
 });
-export const selectMemoriesState = (state: RootState) => state.memories;
 
+export const selectMemoriesState = (state: RootState) => state.memories;
+export const selectMemoryForm = (state: RootState) => state.memories.memoryForm
+export const { closeForm, openEditForm, openForm } = memorySlice.actions;
 export default memorySlice.reducer;

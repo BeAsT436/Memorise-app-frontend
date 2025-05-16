@@ -16,7 +16,7 @@ function parseJWT(token: string | null) {
 type TUser = {
   email: string;
   name: string;
-  id: string;
+  userId: string;
   iat: number;
   exp: number;
 };
