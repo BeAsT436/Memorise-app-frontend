@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { Input } from "./ui/input";
@@ -6,9 +7,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { addMemoryThunk, Memory, selectMemoryForm } from "@/redux/memorySlice";
+import {
+  addMemoryThunk,
+  closeForm,
+  selectMemoryForm,
+  updateMemoryThunk,
+} from "@/redux/memorySlice";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 const validationSchema = z.object({
   title: z
@@ -30,27 +36,34 @@ const CLOUDINARY_URL = `${UPLOAD_BASE_URL}/${UPLOAD_CLOUD_NAME}/image/upload`;
 
 export const MemoryForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [formData, setFormData] = useState<Partial<Memory>>({
-    title: "",
-    desc: "",
-    img: "",
-    local: "private",
-  });
-
   const memoryToEdit = useSelector(selectMemoryForm);
+
+  const isEditing = memoryToEdit && Object.keys(memoryToEdit).length > 0;
+  console.log(isEditing ? "update" : "create");
 
   const form = useForm<z.infer<typeof validationSchema>>({
     resolver: zodResolver(validationSchema),
-    defaultValues: formData,
+    defaultValues: {
+      title: "",
+      desc: "",
+      img: "",
+      local: "private",
+    },
   });
+
   useEffect(() => {
     console.log("effect");
     if (memoryToEdit) {
-      setFormData(memoryToEdit);
+      form.reset(memoryToEdit);
     } else {
-      setFormData(form.getValues());
+      form.reset({
+        title: "",
+        desc: "",
+        img: "",
+        local: "private",
+      });
     }
-  }, []);
+  }, [form, memoryToEdit]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,15 +82,36 @@ export const MemoryForm = () => {
     }
   };
 
+  const handleClose = () => {
+    form.reset();
+    dispatch(closeForm());
+  };
+
   function onSubmit(values: z.infer<typeof validationSchema>) {
-    dispatch(addMemoryThunk(values));
+    if (isEditing) {
+      console.log({ ...values, id: memoryToEdit._id });
+
+      dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
+    } else {
+      dispatch(addMemoryThunk(values));
+    }
+    dispatch(closeForm())
   }
-  const isOpen =
-    !!memoryToEdit ||
-    formData.title ||
-    formData.desc ||
-    formData.img ||
-    formData.local;
+  const isOpen = useMemo(() => {
+    return (
+      !!memoryToEdit ||
+      !!form.watch("title") ||
+      !!form.watch("desc") ||
+      // !!form.watch("local") ||
+      !!form.watch("img")
+    );
+  }, [
+    memoryToEdit,
+    form.watch("title"),
+    form.watch("desc"),
+    // form.watch("local"),
+    form.watch("img"),
+  ]);
   return (
     <div
       className={`flex items-center justify-center fixed inset-0 bg-gray-900 bg-opacity-50 z-50 ${
@@ -168,31 +202,17 @@ export const MemoryForm = () => {
           {form.getValues().img && (
             <img alt="preview" src={form.getValues().img} />
           )}
-          <Button type="submit">add memory</Button>
+          {/* <Button type="submit">add memory</Button> */}
+          <div>
+            <Button onClick={handleClose} type="button">
+              close
+            </Button>
+            <Button type="submit">
+              {isEditing ? "update Memory" : "add Memory"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
   );
 };
-// {
-//   "asset_id": "16ea87f67e7e2baf069b421d99c2a9d4",
-//   "public_id": "iqkurldet2mms7tw4ewx",
-//   "version": 1746167152,
-//   "version_id": "5666e87e9b99007ac0ff724e203bb5c9",
-//   "signature": "6b6ed398acb3081f3a9ff5b49a06b6d08c63501e",
-//   "width": 300,
-//   "height": 168,
-//   "format": "png",
-//   "resource_type": "image",
-//   "created_at": "2025-05-02T06:25:52Z",
-//   "tags": [],
-//   "bytes": 3787,
-//   "type": "upload",
-//   "etag": "d1889371e024c968c2af9b47100d7c1d",
-//   "placeholder": false,
-//   "url": "http://res.cloudinary.com/dexfy4ite/image/upload/v1746167152/iqkurldet2mms7tw4ewx.png",
-//   "secure_url": "https://res.cloudinary.com/dexfy4ite/image/upload/v1746167152/iqkurldet2mms7tw4ewx.png",
-//   "asset_folder": "",
-//   "display_name": "image1",
-//   "original_filename": "image1"
-// }

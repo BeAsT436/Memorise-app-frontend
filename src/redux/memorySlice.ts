@@ -1,18 +1,37 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+
+type Local = "private" | "public";
 
 export interface Memory {
   _id: string;
   userId: string;
-  local: string;
+  local: Local;
   title: string;
   desc: string;
   img: string;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
+// {
+//     "desc": "85585858585",
+//     "title": "28585588",
+//     "img": "https://res.cloudinary.com/dexfy4ite/image/upload/v1747980374/ntftvvzhbdk54jydeicc.png",
+//     "userId": "67dd1196e51469be5c6fd17d",
+//     "local": "public",
+//     "_id": "68301073e389afb9d70dc0f1",
+//     "createdAt": "2025-05-23T06:06:43.104Z",
+//     "updatedAt": "2025-05-23T06:06:43.104Z",
+//     "__v": 0,
+//     "id": "68301073e389afb9d70dc0f1"
+// }
+
 export interface MemoryCreateDTO {
   title: string;
   desc: string;
   img: string;
+  local: Local;
 }
 
 const URL = "http://localhost:3001/api/memory";
@@ -56,8 +75,25 @@ export const addMemoryThunk = createAsyncThunk(
   }
 );
 
+export const updateMemoryThunk = createAsyncThunk(
+  "memory/update",
+  async (memoryData: Partial<MemoryCreateDTO> & {id:string}) => {
+    const token = localStorage.getItem("token");
+    const { id, ...rest } = memoryData;
+    const responce = await fetch(`${URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(rest),
+    });
+    return responce.json();
+  }
+);
+
 const initialState: {
-  memoryForm: Memory | null;
+  memoryForm: MemoryCreateDTO | null;
   memories: Memory[];
   loading: boolean;
 } = {
@@ -70,12 +106,12 @@ const memorySlice = createSlice({
   initialState,
   reducers: {
     openForm: (state) => {
-      state.memoryForm = {} as Memory;
+      state.memoryForm = {} as MemoryCreateDTO;
     },
     closeForm: (state) => {
       state.memoryForm = null;
     },
-    openEditForm: (state, action) => {
+    openEditForm: (state, action: PayloadAction<MemoryCreateDTO>) => {
       state.memoryForm = action.payload;
     },
   },
@@ -96,10 +132,18 @@ const memorySlice = createSlice({
     builder.addCase(addMemoryThunk.fulfilled, (state, action) => {
       state.memories.push(action.payload);
     });
+    builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
+      const index = state.memories.findIndex(
+        (memory) => memory._id === action.payload._id
+      );
+      if (index !== -1) {
+        state.memories[index] = action.payload;
+      }
+    });
   },
 });
 
 export const selectMemoriesState = (state: RootState) => state.memories;
-export const selectMemoryForm = (state: RootState) => state.memories.memoryForm
+export const selectMemoryForm = (state: RootState) => state.memories.memoryForm;
 export const { closeForm, openEditForm, openForm } = memorySlice.actions;
 export default memorySlice.reducer;

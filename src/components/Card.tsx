@@ -1,5 +1,5 @@
 import { selectAuthState } from "@/redux/authSlice";
-import { Memory, deleteMemoryThunk } from "@/redux/memorySlice";
+import { Memory, deleteMemoryThunk, openEditForm} from "@/redux/memorySlice";
 import { AppDispatch } from "@/redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "./ui/button";
@@ -16,6 +16,9 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
   const handleDelete = (id: string) => {
     dispatch(deleteMemoryThunk(id));
   };
+  const handleOpenEditForm = ()=>{
+    dispatch(openEditForm(memory))
+  }
   return (
     <div className="bg-white rounded-md p-5">
       <img
@@ -32,6 +35,11 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
             variant={"destructive"}
           >
             delete
+          </Button>
+          <Button
+           onClick={handleOpenEditForm}
+           variant={"secondary"}>
+            edit
           </Button>
         </div>
       )}
