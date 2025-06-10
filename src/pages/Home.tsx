@@ -16,13 +16,14 @@ export const Home = () => {
   }, [dispatch]);
 
   return (
-    <>
-      <div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4 text-blue-950">shared memories</h1>
+      <div className="grid grid-cols-1">
         {memories.map((memory) => (
           <Card memory={memory} key={memory._id} />
         ))}
       </div>
       <MemoryForm />
-    </>
+    </div>
   );
 };

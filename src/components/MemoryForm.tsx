@@ -39,7 +39,6 @@ export const MemoryForm = () => {
   const memoryToEdit = useSelector(selectMemoryForm);
 
   const isEditing = memoryToEdit && Object.keys(memoryToEdit).length > 0;
-  console.log(isEditing ? "update" : "create");
 
   const form = useForm<z.infer<typeof validationSchema>>({
     resolver: zodResolver(validationSchema),
@@ -52,7 +51,6 @@ export const MemoryForm = () => {
   });
 
   useEffect(() => {
-    console.log("effect");
     if (memoryToEdit) {
       form.reset(memoryToEdit);
     } else {
@@ -89,13 +87,11 @@ export const MemoryForm = () => {
 
   function onSubmit(values: z.infer<typeof validationSchema>) {
     if (isEditing) {
-      console.log({ ...values, id: memoryToEdit._id });
-
       dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
     } else {
       dispatch(addMemoryThunk(values));
     }
-    dispatch(closeForm())
+    dispatch(closeForm());
   }
   const isOpen = useMemo(() => {
     return (

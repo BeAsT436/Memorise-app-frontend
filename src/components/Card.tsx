@@ -3,6 +3,7 @@ import { Memory, deleteMemoryThunk, openEditForm} from "@/redux/memorySlice";
 import { AppDispatch } from "@/redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "./ui/button";
+import { CardContent, CardHeader, CardTitle, Card as ShadcnCard } from "./ui/card";
 
 interface CardProps {
   memory: Memory;
@@ -10,6 +11,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ memory }) => {
   const { user } = useSelector(selectAuthState);
+  const {img, title, desc, _id} = memory
   const defaultImg =
     "https://upload.wikimedia.org/wikipedia/commons/7/77/Pirogue_running_on_the_Mekong_at_golden_hour_between_Don_Det_and_Don_Khon_Laos.jpg";
   const dispatch = useDispatch<AppDispatch>();
@@ -20,18 +22,25 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
     dispatch(openEditForm(memory))
   }
   return (
-    <div className="bg-white rounded-md p-5">
+    <ShadcnCard>
       <img
-        src={memory.img || defaultImg}
+        src={img || defaultImg}
         alt="river"
         className="w-full h-48 object-cover mb-3"
       />
-      <h2 className="text-lg font-bold">{memory.title}</h2>
-      <p className="text-gray-600 ">{memory.desc}</p>
+      <CardHeader>
+        <CardTitle>
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-gray-600 ">{desc}</p>
+      </CardContent>
+
       {user?.userId === memory.userId && (
         <div>
           <Button
-            onClick={() => handleDelete(memory._id)}
+            onClick={() => handleDelete(_id)}
             variant={"destructive"}
           >
             delete
@@ -43,6 +52,6 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
           </Button>
         </div>
       )}
-    </div>
+    </ShadcnCard>
   );
 };
