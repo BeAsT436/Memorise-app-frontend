@@ -23,6 +23,7 @@ export const Home = () => {
           <Card memory={memory} key={memory._id} />
         ))}
       </div>
+      <h1></h1>
       <MemoryForm />
     </div>
   );

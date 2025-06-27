@@ -46,7 +46,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         return;
       }
-      // todo fix bakend responce
       const user = parseJWT(action.payload.token);
       if (user) {
         state.user = user;

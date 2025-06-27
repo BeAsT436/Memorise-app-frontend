@@ -35,6 +35,19 @@ export interface MemoryCreateDTO {
 }
 
 const URL = "http://localhost:3001/api/memory";
+// todo fetch my memories
+export const fetchMyMemories = createAsyncThunk(
+  "memory/fetchMy",
+  async () => {
+    const token = localStorage.getItem("token");
+    const data = await fetch(`${URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data.json()
+  }
+);
 export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
   const token = localStorage.getItem("token");
   const data = await fetch(URL, {
@@ -77,7 +90,7 @@ export const addMemoryThunk = createAsyncThunk(
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
-  async (memoryData: Partial<MemoryCreateDTO> & {id:string}) => {
+  async (memoryData: Partial<MemoryCreateDTO> & { id: string }) => {
     const token = localStorage.getItem("token");
     const { id, ...rest } = memoryData;
     const responce = await fetch(`${URL}/${id}`, {
@@ -96,11 +109,14 @@ const initialState: {
   memoryForm: MemoryCreateDTO | null;
   memories: Memory[];
   loading: boolean;
+  myMemories: Memory[];
 } = {
   memories: [],
   loading: false,
   memoryForm: null,
+  myMemories: [],
 };
+
 const memorySlice = createSlice({
   name: "memory",
   initialState,
@@ -124,6 +140,10 @@ const memorySlice = createSlice({
       .addCase(fetchMemories.pending, (state) => {
         state.loading = true;
       });
+    // todo builder for my memories
+    builder.addCase(fetchMyMemories.fulfilled, (state, action) => {
+      state.myMemories = action.payload;
+    });
     builder.addCase(deleteMemoryThunk.fulfilled, (state, action) => {
       state.memories = state.memories.filter(
         (memory) => memory._id !== action.payload
