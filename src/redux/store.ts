@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from "./authSlice"
 import memoriesReducer from "./memorySlice"
+import userReducer from "./userSlice";
 
  const store = configureStore({
     reducer: {
         auth: authReducer,
-        memories: memoriesReducer
+        memories: memoriesReducer,
+        user: userReducer
     }
  })
 

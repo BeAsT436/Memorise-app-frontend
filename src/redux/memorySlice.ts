@@ -34,7 +34,7 @@ export interface MemoryCreateDTO {
   local: Local;
 }
 
-const URL = "http://localhost:3001/api/memory";
+export const URL = "http://localhost:3001/api/memory";
 // todo fetch my memories
 export const fetchMyMemories = createAsyncThunk(
   "memory/fetchMy",

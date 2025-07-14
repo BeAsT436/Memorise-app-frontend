@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { TUser } from "@/types/user";
 
 function parseJWT(token: string | null) {
   if (!token) return null;
@@ -13,13 +14,7 @@ function parseJWT(token: string | null) {
   }
 }
 
-type TUser = {
-  email: string;
-  name: string;
-  userId: string;
-  iat: number;
-  exp: number;
-};
+
 
 interface AuthState {
   user: TUser | null;
