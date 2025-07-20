@@ -12,6 +12,7 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
+import { updateUser } from "@/redux/userSlice";
 
 export const Profile: FC = () => {
   const { user } = useSelector(selectAuthState);
@@ -19,6 +20,8 @@ export const Profile: FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+
+  
 
   const dispatch = useAppDispatch();
 
@@ -30,8 +33,11 @@ export const Profile: FC = () => {
     dispatch(fetchMyMemories());
   }, [dispatch]);
 
+  if (!user?.userId) return null;
+
+  
   const handleSave = () => {
-    //todo dispatch(updateUser({name, email}))
+    dispatch(updateUser({ name, email, id: user?.userId }));
     setIsEditing(false);
   };
   return (
