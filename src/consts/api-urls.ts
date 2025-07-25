@@ -1,5 +1,5 @@
-export const baseURL = `http://localhost:3001/api/`
+export const baseURL = `http://localhost:3001/api/`;
 export const userURL = {
-    UPDATE:(id: string)=>`users/${id}`
-
-}
+  UPDATE: (id: string) => `users/${id}`,
+  GET_PROFILE: (id: string) => `users/${id}`,
+};

@@ -24,7 +24,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
     dispatch(openEditForm(memory))
   }
   return (
-    <ShadcnCard className="py-0 relative">
+    <ShadcnCard className="py-0 relative" key={memory.id}>
       <img
         src={img || defaultImg}
         alt="river"

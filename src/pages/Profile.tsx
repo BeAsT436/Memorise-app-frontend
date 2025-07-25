@@ -12,39 +12,41 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
-import { updateUser } from "@/redux/userSlice";
+import { getProfile, selectUserState, updateUser } from "@/redux/userSlice";
 
 export const Profile: FC = () => {
-  const { user } = useSelector(selectAuthState);
+  const { user: authUser } = useSelector(selectAuthState);
+  const { user } = useSelector(selectUserState);
   const { myMemories } = useSelector(selectMemoriesState);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
 
-  
-
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    console.log("effect");
+
+    dispatch(fetchMyMemories());
+    if (authUser?.userId) dispatch(getProfile(authUser?.userId));
+  }, [dispatch, authUser?.userId]);
+
+  if (!user?._id) return null;
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  useEffect(() => {
-    dispatch(fetchMyMemories());
-  }, [dispatch]);
-
-  if (!user?.userId) return null;
-
-  
   const handleSave = () => {
-    dispatch(updateUser({ name, email, id: user?.userId }));
+    dispatch(updateUser({ name, email, id: user?._id }));
     setIsEditing(false);
   };
+  // todo update image with cloudinary
   return (
     <ShadcnCard className="w-full p-4 ">
       <div className="flex items-center justify-between p-6 bg-slate-500 rounded-lg">
         <div className="flex items-center space-x-4">
-          {/*todo update image with cloudinary  */}
+          {/* image here */}
           <div>
             {isEditing ? (
               <Button onClick={handleSave} className="rounded-full w-14 h-14">
@@ -54,6 +56,8 @@ export const Profile: FC = () => {
               <Button
                 className="rounded-full w-14 h-14"
                 onClick={() => {
+                  setName(user.name);
+                  setEmail(user.email);
                   setIsEditing(true);
                 }}
               >

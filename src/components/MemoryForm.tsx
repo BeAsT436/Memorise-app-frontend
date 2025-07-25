@@ -28,7 +28,7 @@ const validationSchema = z.object({
   img: z.string(),
   local: z.enum(["private", "public"], { message: "local is required" }),
 });
-
+// todo move to constants
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const UPLOAD_BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 const UPLOAD_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -62,7 +62,8 @@ export const MemoryForm = () => {
       });
     }
   }, [form, memoryToEdit]);
-
+  // todo use this similar function to upload avatar on profile page
+  // !in future move this function to utils
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -88,6 +89,7 @@ export const MemoryForm = () => {
   function onSubmit(values: z.infer<typeof validationSchema>) {
     if (isEditing) {
       dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
+      // ! fix type of updateMemory
     } else {
       dispatch(addMemoryThunk(values));
     }

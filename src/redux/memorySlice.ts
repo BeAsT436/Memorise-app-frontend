@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { getToken } from "@/utils/auth";
 
 type Local = "private" | "public";
 
@@ -39,7 +40,7 @@ const URL = "http://localhost:3001/api/memory";
 export const fetchMyMemories = createAsyncThunk(
   "memory/fetchMy",
   async () => {
-    const token = localStorage.getItem("token");
+    const token = getToken()
     const data = await fetch(`${URL}/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -49,7 +50,7 @@ export const fetchMyMemories = createAsyncThunk(
   }
 );
 export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
-  const token = localStorage.getItem("token");
+  const token = getToken()
   const data = await fetch(URL, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -61,7 +62,7 @@ export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
 export const deleteMemoryThunk = createAsyncThunk(
   "memory/delete",
   async (id: string) => {
-    const token = localStorage.getItem("token");
+    const token = getToken()
     await fetch(`${URL}/${id}`, {
       method: "DELETE",
       headers: {
@@ -75,7 +76,7 @@ export const deleteMemoryThunk = createAsyncThunk(
 export const addMemoryThunk = createAsyncThunk(
   "memory/add",
   async (memoryData: MemoryCreateDTO) => {
-    const token = localStorage.getItem("token");
+    const token = getToken()
     const responce = await fetch(URL, {
       method: "POST",
       headers: {
@@ -91,7 +92,7 @@ export const addMemoryThunk = createAsyncThunk(
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
   async (memoryData: Partial<MemoryCreateDTO> & { id: string }) => {
-    const token = localStorage.getItem("token");
+    const token = getToken()
     const { id, ...rest } = memoryData;
     const responce = await fetch(`${URL}/${id}`, {
       method: "PUT",

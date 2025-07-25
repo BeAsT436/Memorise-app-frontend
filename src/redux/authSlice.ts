@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { TUser } from "@/types/user";
+import { getToken, removeToken, setToken } from "@/utils/auth";
 
 function parseJWT(token: string | null) {
   if (!token) return null;
@@ -26,8 +27,8 @@ interface ActionPayload {
 }
 
 const initialState: AuthState = {
-  user: parseJWT(localStorage.getItem("token")),
-  isAuthenticated: parseJWT(localStorage.getItem("token")) !== null,
+  user: parseJWT(getToken()),
+  isAuthenticated: parseJWT(getToken()) !== null,
 };
 
 const authSlice = createSlice({
@@ -45,7 +46,7 @@ const authSlice = createSlice({
       if (user) {
         state.user = user;
         state.isAuthenticated = true;
-        localStorage.setItem("token", action.payload.token);
+        setToken(action.payload.token)
       } else {
         state.user = null;
         state.isAuthenticated = false;
@@ -53,7 +54,7 @@ const authSlice = createSlice({
       }
     },
     logout: (state) => {
-      localStorage.removeItem("token");
+      removeToken()
       state.user = null;
       state.isAuthenticated = false;
     },
