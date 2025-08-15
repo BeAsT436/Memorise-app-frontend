@@ -13,8 +13,8 @@ import {
   selectMemoryForm,
   updateMemoryThunk,
 } from "@/redux/memorySlice";
-import axios from "axios";
 import { useEffect, useMemo } from "react";
+import { uploadImg } from "@/utils/uploadImg";
 
 const validationSchema = z.object({
   title: z
@@ -28,11 +28,6 @@ const validationSchema = z.object({
   img: z.string(),
   local: z.enum(["private", "public"], { message: "local is required" }),
 });
-// todo move to constants
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const UPLOAD_BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
-const UPLOAD_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_URL = `${UPLOAD_BASE_URL}/${UPLOAD_CLOUD_NAME}/image/upload`;
 
 export const MemoryForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -62,23 +57,13 @@ export const MemoryForm = () => {
       });
     }
   }, [form, memoryToEdit]);
-  // todo use this similar function to upload avatar on profile page
-  // !in future move this function to utils
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    
     if (!file) return;
 
-    const imgForm = new FormData();
-    imgForm.append("file", file);
-    imgForm.append("upload_preset", UPLOAD_PRESET);
-
-    try {
-      const res = await axios.post(CLOUDINARY_URL, imgForm);
-      const imgURL = res.data.secure_url;
+      const imgURL = await uploadImg(file);
       form.setValue("img", imgURL);
-    } catch (error) {
-      console.log("Upload Error", error);
-    }
   };
 
   const handleClose = () => {
@@ -89,7 +74,7 @@ export const MemoryForm = () => {
   function onSubmit(values: z.infer<typeof validationSchema>) {
     if (isEditing) {
       dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
-      // ! fix type of updateMemory
+      //! todo fix type of updateMemory
     } else {
       dispatch(addMemoryThunk(values));
     }

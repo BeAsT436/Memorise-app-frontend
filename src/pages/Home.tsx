@@ -14,6 +14,8 @@ export const Home = () => {
   useEffect(() => {
     dispatch(fetchMemories());
   }, [dispatch]);
+ 
+  
 
   return (
     <div className="p-4">
@@ -23,7 +25,6 @@ export const Home = () => {
           <Card memory={memory} key={memory._id} />
         ))}
       </div>
-      <h1></h1>
       <MemoryForm />
     </div>
   );

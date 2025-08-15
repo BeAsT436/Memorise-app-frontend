@@ -13,6 +13,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
 import { getProfile, selectUserState, updateUser } from "@/redux/userSlice";
+import { uploadImg } from "@/utils/uploadImg";
 
 export const Profile: FC = () => {
   const { user: authUser } = useSelector(selectAuthState);
@@ -21,15 +22,28 @@ export const Profile: FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+  const [isUpload, setIsUpload] = useState(false);
+  const [avatar, setAvatar] = useState(
+    user?.avatar || "https://cdn-icons-png.flaticon.com/512/266/266033.png"
+  );
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log("effect");
+    
 
     dispatch(fetchMyMemories());
     if (authUser?.userId) dispatch(getProfile(authUser?.userId));
   }, [dispatch, authUser?.userId]);
+
+  useEffect(()=>{
+    console.log("effect");
+  if(user){
+    setName(user.name)
+    setEmail(user.email)
+    setAvatar(user.avatar)
+  }  
+  },[user])
 
   if (!user?._id) return null;
 
@@ -38,15 +52,28 @@ export const Profile: FC = () => {
   };
 
   const handleSave = () => {
-    dispatch(updateUser({ name, email, id: user?._id }));
+    dispatch(updateUser({ name, email, avatar, id: user?._id }));
     setIsEditing(false);
   };
-  // todo update image with cloudinary
+
+  const handleChangeAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    setIsUpload(true);
+
+    const URL = await uploadImg(file);
+    if (URL) {
+      setAvatar(URL);
+    }
+    setIsUpload(false);
+  };
+
   return (
     <ShadcnCard className="w-full p-4 ">
       <div className="flex items-center justify-between p-6 bg-slate-500 rounded-lg">
         <div className="flex items-center space-x-4">
-          {/* image here */}
           <div>
             {isEditing ? (
               <Button onClick={handleSave} className="rounded-full w-14 h-14">
@@ -67,9 +94,20 @@ export const Profile: FC = () => {
           </div>
           <img
             className="w-16 h-16 rounded-full object-cover"
-            src="https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
+            src={avatar}
             alt=""
           />
+          {isEditing && (
+            <div>
+              <input
+                onChange={handleChangeAvatar}
+                // className="hidden"
+                type="file"
+                accept="image/*"
+              />
+              <Button>change</Button>
+            </div>
+          )}
 
           {isEditing ? (
             <div className="flex flex-col gap-2">
@@ -85,6 +123,9 @@ export const Profile: FC = () => {
                   setEmail(e.target.value);
                 }}
               />
+              {isUpload && (
+                <p className="text-white text-xs">Uploading avatar...</p>
+              )}
             </div>
           ) : (
             <div>

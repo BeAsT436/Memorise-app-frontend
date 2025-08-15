@@ -6,6 +6,7 @@ import { getToken } from "@/utils/auth";
 interface UpdateDTO {
   name: string;
   email: string;
+  avatar: string;
   id: string;
 }
 // todo implement get my info
@@ -57,6 +58,7 @@ interface User {
   password: string;
   role: string;
   updatedAt: string;
+  avatar: string;
   __v: number;
   _id: string;
 }
