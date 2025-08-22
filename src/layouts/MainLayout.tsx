@@ -10,13 +10,11 @@ const dispatch = useDispatch()
 const handleOpenForm = ()=>{
   dispatch(openForm())
 }
- console.log("openForm",openForm);
-
   return (
     <div className="flex flex-col min-h-screen">
         <header className="bg-blue-600 text-white p-4 flex justify-between items-center ">
             <img src={logo} alt="logo" className="h-24 w-24 rounded-full" />
-//todo fix the method that it works from all pages            
+          
             <Button onClick={handleOpenForm}>+ add memory</Button>
         </header>
         <div className="flex flex-1 ">

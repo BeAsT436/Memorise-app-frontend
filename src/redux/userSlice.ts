@@ -9,7 +9,6 @@ interface UpdateDTO {
   avatar: string;
   id: string;
 }
-// todo implement get my info
 export const getProfile = createAsyncThunk(
   "user/getProfile",
   async (id: string, { rejectWithValue }) => {
@@ -51,6 +50,27 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const getAllUsers = createAsyncThunk(
+  "user/getAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const res = await fetch(baseURL + userURL.GET_ALL_USERS, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) {
+        throw new Error("failed to update");
+      }
+      return res.json();
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+
 interface User {
   createdAt: string;
   email: string;
@@ -64,12 +84,14 @@ interface User {
 }
 
 interface UserState {
+  users: User[] | null;
   user: User | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
+  users: null,
   user: null,
   loading: false,
   error: null,
@@ -80,6 +102,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearState: (state) => {
+      state.users = null
       state.user = null;
       state.loading = false;
       state.error = null;
@@ -107,6 +130,18 @@ const userSlice = createSlice({
         state.loading = false;
       })
       .addCase(getProfile.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      })
+
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
+        state.loading = false;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;
       });

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { logout, selectAuthState } from "@/redux/authSlice";
 import { useAppDispatch } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector} from "react-redux";
 import {
   CheckIcon,
   PencilIcon,
@@ -14,6 +14,8 @@ import {
 import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
 import { getProfile, selectUserState, updateUser } from "@/redux/userSlice";
 import { uploadImg } from "@/utils/uploadImg";
+import { MemoryForm } from "@/components/MemoryForm";
+
 
 export const Profile: FC = () => {
   const { user: authUser } = useSelector(selectAuthState);
@@ -145,6 +147,7 @@ export const Profile: FC = () => {
           <Card memory={memory} key={memory.id} />
         ))}
       </div>
+      <MemoryForm />
     </ShadcnCard>
   );
 };

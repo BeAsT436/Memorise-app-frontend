@@ -36,7 +36,6 @@ export interface MemoryCreateDTO {
 }
 
 const URL = "http://localhost:3001/api/memory";
-// todo fetch my memories
 export const fetchMyMemories = createAsyncThunk(
   "memory/fetchMy",
   async () => {
@@ -141,7 +140,6 @@ const memorySlice = createSlice({
       .addCase(fetchMemories.pending, (state) => {
         state.loading = true;
       });
-    // todo builder for my memories
     builder.addCase(fetchMyMemories.fulfilled, (state, action) => {
       state.myMemories = action.payload;
     });

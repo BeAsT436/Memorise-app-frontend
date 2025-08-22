@@ -12,6 +12,7 @@ import { Public } from "./components/Public";
 import { Private } from "./components/Private";
 import { Home } from "./pages/Home";
 import { MainLayout } from "./layouts/MainLayout";
+import { Users } from "./pages/Users";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <Home />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
     ],
   },
