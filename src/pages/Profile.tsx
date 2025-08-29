@@ -15,6 +15,7 @@ import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
 import { getProfile, selectUserState, updateUser } from "@/redux/userSlice";
 import { uploadImg } from "@/utils/uploadImg";
 import { MemoryForm } from "@/components/MemoryForm";
+import { baseAvatar } from "@/consts/baseAvatar";
 
 
 export const Profile: FC = () => {
@@ -26,7 +27,7 @@ export const Profile: FC = () => {
   const [email, setEmail] = useState(user?.email || "");
   const [isUpload, setIsUpload] = useState(false);
   const [avatar, setAvatar] = useState(
-    user?.avatar || "https://cdn-icons-png.flaticon.com/512/266/266033.png"
+    user?.avatar || baseAvatar
   );
 
   const dispatch = useAppDispatch();
