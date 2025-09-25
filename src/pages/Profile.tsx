@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { logout, selectAuthState } from "@/redux/authSlice";
 import { useAppDispatch } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import {
   CheckIcon,
   PencilIcon,
@@ -17,7 +17,6 @@ import { uploadImg } from "@/utils/uploadImg";
 import { MemoryForm } from "@/components/MemoryForm";
 import { baseAvatar } from "@/consts/baseAvatar";
 
-
 export const Profile: FC = () => {
   const { user: authUser } = useSelector(selectAuthState);
   const { user } = useSelector(selectUserState);
@@ -26,27 +25,22 @@ export const Profile: FC = () => {
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [isUpload, setIsUpload] = useState(false);
-  const [avatar, setAvatar] = useState(
-    user?.avatar || baseAvatar
-  );
+  const [avatar, setAvatar] = useState(user?.avatar || baseAvatar);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    
-
     dispatch(fetchMyMemories());
     if (authUser?.userId) dispatch(getProfile(authUser?.userId));
   }, [dispatch, authUser?.userId]);
 
-  useEffect(()=>{
-    console.log("effect");
-  if(user){
-    setName(user.name)
-    setEmail(user.email)
-    setAvatar(user.avatar)
-  }  
-  },[user])
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setAvatar(user.avatar);
+    }
+  }, [user]);
 
   if (!user?._id) return null;
 

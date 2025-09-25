@@ -2,6 +2,7 @@ import { baseURL, userURL } from "@/consts/api-urls";
 import { RootState } from "./store";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getToken } from "@/utils/auth";
+import axios from "axios";
 
 interface UpdateDTO {
   name: string;
@@ -69,7 +70,45 @@ export const getAllUsers = createAsyncThunk(
     }
   }
 );
-
+export const subscribe = createAsyncThunk(
+  "user/subscribe",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const res = await axios.post(
+        baseURL + userURL.SUBSCRIBE(userId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status !== 201) {
+        throw new Error("failed to subscribe");
+      }
+      return { userId, message: res.data.message };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const unsubscribe = createAsyncThunk(
+  "user/unsubscribe",
+  async (userId:string)=>{
+    const token = getToken();
+    const res = await axios.post(
+        baseURL + userURL.UNSUBSCRIBE(userId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return {userId,message:res.data.message}
+  }
+)
 
 interface User {
   createdAt: string;
@@ -88,6 +127,8 @@ interface UserState {
   user: User | null;
   loading: boolean;
   error: string | null;
+  subscribers: string[];
+  subscriptions: string[];
 }
 
 const initialState: UserState = {
@@ -95,6 +136,8 @@ const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
+  subscribers: [],
+  subscriptions: [],
 };
 
 const userSlice = createSlice({
@@ -102,7 +145,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearState: (state) => {
-      state.users = null
+      state.users = null;
       state.user = null;
       state.loading = false;
       state.error = null;
@@ -144,7 +187,16 @@ const userSlice = createSlice({
       .addCase(getAllUsers.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;
-      });
+      })
+      
+      .addCase(subscribe.fulfilled, (state, action) => {
+        console.log(action.payload);
+        
+        state.subscriptions?.push(action.payload.userId);
+      })
+      .addCase(unsubscribe.fulfilled, (state, action)=>{
+        state.subscriptions = state.subscriptions.filter((id)=>id!==action.payload.userId)
+      })
   },
 });
 
