@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card as ShadcnCard } from "@/components/ui/card";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 import { logout, selectAuthState } from "@/redux/authSlice";
@@ -42,14 +41,14 @@ export const Profile: FC = () => {
     }
   }, [user]);
 
-  if (!user?._id) return null;
+  if (!user?.id) return null;
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const handleSave = () => {
-    dispatch(updateUser({ name, email, avatar, id: user?._id }));
+    dispatch(updateUser({ name, email, avatar, id: user?.id }));
     setIsEditing(false);
   };
 
@@ -68,7 +67,7 @@ export const Profile: FC = () => {
   };
 
   return (
-    <ShadcnCard className="w-full p-4 ">
+    <div className="w-full p-4 bg-inherit space-y-4">
       <div className="flex items-center justify-between p-6 bg-slate-500 rounded-lg">
         <div className="flex items-center space-x-4">
           <div>
@@ -126,10 +125,10 @@ export const Profile: FC = () => {
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-white">
                 {user?.name}
               </h2>
-              <p className="text-gray-600">{user?.email}</p>
+              <p className="text-white/70">{user?.email}</p>
             </div>
           )}
         </div>
@@ -139,10 +138,10 @@ export const Profile: FC = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
         {myMemories.map((memory) => (
-          <Card memory={memory} key={memory.id} />
+          <Card  memory={memory} key={memory._id} />
         ))}
       </div>
       <MemoryForm />
-    </ShadcnCard>
+    </div>
   );
 };

@@ -95,31 +95,26 @@ export const subscribe = createAsyncThunk(
 );
 export const unsubscribe = createAsyncThunk(
   "user/unsubscribe",
-  async (userId:string)=>{
+  async (userId: string) => {
     const token = getToken();
-    const res = await axios.post(
-        baseURL + userURL.UNSUBSCRIBE(userId),
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return {userId,message:res.data.message}
+    const res = await axios.delete(baseURL + userURL.UNSUBSCRIBE(userId), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return { userId, message: res.data.message };
   }
-)
+);
 
 interface User {
   createdAt: string;
   email: string;
   name: string;
-  password: string;
   role: string;
   updatedAt: string;
   avatar: string;
-  __v: number;
   _id: string;
+  id: string
 }
 
 interface UserState {
@@ -170,6 +165,8 @@ const userSlice = createSlice({
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.subscriptions = action.payload.subscriptions;
+        state.subscribers = action.payload.subscribers;
         state.loading = false;
       })
       .addCase(getProfile.rejected, (state, action) => {
@@ -188,15 +185,17 @@ const userSlice = createSlice({
         state.error = action.payload as string;
         state.loading = false;
       })
-      
+
       .addCase(subscribe.fulfilled, (state, action) => {
         console.log(action.payload);
-        
+
         state.subscriptions?.push(action.payload.userId);
       })
-      .addCase(unsubscribe.fulfilled, (state, action)=>{
-        state.subscriptions = state.subscriptions.filter((id)=>id!==action.payload.userId)
-      })
+      .addCase(unsubscribe.fulfilled, (state, action) => {
+        state.subscriptions = state.subscriptions.filter(
+          (id) => id !== action.payload.userId
+        );
+      });
   },
 });
 

@@ -13,6 +13,7 @@ import { Private } from "./components/Private";
 import { Home } from "./pages/Home";
 import { MainLayout } from "./layouts/MainLayout";
 import { Users } from "./pages/Users";
+import { UserProfile } from "./pages/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -59,14 +60,15 @@ const router = createBrowserRouter([
         path: "users",
         element: <Users />,
       },
+      {path: "users/:id",
+        element: <UserProfile/>
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
-  </StrictMode>
 );

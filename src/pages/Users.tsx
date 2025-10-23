@@ -5,6 +5,7 @@ import { AppDispatch, useAppSelector } from "@/redux/store";
 import { getAllUsers, selectUserState } from "@/redux/userSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router";
 
 export const Users = () => {
   const { users } = useSelector(selectUserState);
@@ -15,23 +16,23 @@ export const Users = () => {
   }, [dispatch]);
   const currentUserID = useAppSelector((state) => state.user.user?._id);
   const filteredUsers =
-    users?.filter((user) => user._id !== currentUserID) || [];
+    users?.filter((user) => user.id !== currentUserID) || [];
   return (
-    <div className="w-full">
+    <div className="w-full space-y-5 p-4">
       <h1 className="text-lg font-bold">Members</h1>
       {filteredUsers?.map((user) => (
-        <Card key={user._id}>
-          <CardContent className="flex w-full justify-between items-center">
+        <Card key={user.id} className="bg-white/40 ">
+          <CardContent className="flex w-full justify-between items-center ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full">
                 <img src={user.avatar || baseAvatar} alt="avatar" />
               </div>
               <div>
-                <div className=" text-lg font-semibold">{user.name}</div>
+                <div className=" text-lg font-semibold"><Link to={`/users/${user._id}`}>{user.name}</Link></div>
                 <div className="text-xs text-gray-700">{user.email}</div>
               </div>
             </div>
-            <SubscribeButton userId={user._id} />
+            <SubscribeButton userId={user.id} />
           </CardContent>
         </Card>
       ))}
