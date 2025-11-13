@@ -14,7 +14,7 @@ export const Users = () => {
   useEffect(() => {
     dispatch(getAllUsers());
   }, [dispatch]);
-  const currentUserID = useAppSelector((state) => state.user.user?._id);
+  const currentUserID = useAppSelector((state) => state.user.user?.id);
   const filteredUsers =
     users?.filter((user) => user.id !== currentUserID) || [];
   return (
@@ -28,7 +28,7 @@ export const Users = () => {
                 <img src={user.avatar || baseAvatar} alt="avatar" />
               </div>
               <div>
-                <div className=" text-lg font-semibold"><Link to={`/users/${user._id}`}>{user.name}</Link></div>
+                <div className=" text-lg font-semibold"><Link to={`/users/${user.id}`}>{user.name}</Link></div>
                 <div className="text-xs text-gray-700">{user.email}</div>
               </div>
             </div>

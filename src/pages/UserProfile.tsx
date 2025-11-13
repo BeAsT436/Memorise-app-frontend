@@ -12,8 +12,10 @@ export const UserProfile = () => {
   const { users } = useSelector(selectUserState);
   const { memories } = useAppSelector(selectMemoriesState);
   const userMemories = memories.filter((memory) => memory.userId == id);
+  console.log("memories:", userMemories);
+  
   // todo fix bug
-  const user = users?.find((user) => user._id == id);
+  const user = users?.find((user) => user.id == id);
 
 
   return (

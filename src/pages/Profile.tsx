@@ -32,7 +32,7 @@ export const Profile: FC = () => {
     dispatch(fetchMyMemories());
     if (authUser?.userId) dispatch(getProfile(authUser?.userId));
   }, [dispatch, authUser?.userId]);
-
+  //todo fix close edit mode
   useEffect(() => {
     if (user) {
       setName(user.name);

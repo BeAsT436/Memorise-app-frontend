@@ -14,9 +14,9 @@ export const Home = () => {
 
 
   const { memories } = useSelector(selectMemoriesState);
-  useEffect(() => {
-    dispatch(fetchMemories());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchMemories());
+  // }, [dispatch]);
  
   
 
