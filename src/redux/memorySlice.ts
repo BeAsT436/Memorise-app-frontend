@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { getToken } from "@/utils/auth";
+import api from "@/api/api";
+import { memoryURL } from "@/consts/api-urls";
 
 type Local = "private" | "public";
 
@@ -15,41 +17,23 @@ export interface Memory {
   updatedAt: string;
   id: string;
 }
-// {
-//     "desc": "85585858585",
-//     "title": "28585588",
-//     "img": "https://res.cloudinary.com/dexfy4ite/image/upload/v1747980374/ntftvvzhbdk54jydeicc.png",
-//     "userId": "67dd1196e51469be5c6fd17d",
-//     "local": "public",
-//     "_id": "68301073e389afb9d70dc0f1",
-//     "createdAt": "2025-05-23T06:06:43.104Z",
-//     "updatedAt": "2025-05-23T06:06:43.104Z",
-//     "__v": 0,
-//     "id": "68301073e389afb9d70dc0f1"
-// }
 
 export interface MemoryCreateDTO {
   title: string;
   desc: string;
-  img: string;
+  img?: string;
   local: Local;
 }
 
 const URL = "http://localhost:3001/api/memory";
-export const fetchMyMemories = createAsyncThunk(
-  "memory/fetchMy",
-  async () => {
-    const token = getToken()
-    const data = await fetch(`${URL}/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return data.json()
-  }
-);
+
+export const fetchMyMemories = createAsyncThunk("memory/fetchMy", async () => {
+  const res = await api.get<Memory[]>(memoryURL.ME);
+  return res.data;
+});
+
 export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
-  const token = getToken()
+  const token = getToken();
   const data = await fetch(URL, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -61,13 +45,8 @@ export const fetchMemories = createAsyncThunk("memory/fetchAll", async () => {
 export const deleteMemoryThunk = createAsyncThunk(
   "memory/delete",
   async (id: string) => {
-    const token = getToken()
-    await fetch(`${URL}/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    await api.delete(memoryURL.DELETE(id));
+
     return id;
   }
 );
@@ -75,33 +54,24 @@ export const deleteMemoryThunk = createAsyncThunk(
 export const addMemoryThunk = createAsyncThunk(
   "memory/add",
   async (memoryData: MemoryCreateDTO) => {
-    const token = getToken()
-    const responce = await fetch(URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(memoryData),
-    });
-    return responce.json();
+    if (!memoryData.img) {
+      delete memoryData.img;
+    }
+
+    const res = await api.post(memoryURL.ADD, memoryData);
+    return res.data;
   }
 );
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
   async (memoryData: Partial<MemoryCreateDTO> & { id: string }) => {
-    const token = getToken()
     const { id, ...rest } = memoryData;
-    const responce = await fetch(`${URL}/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(rest),
-    });
-    return responce.json();
+
+    const res = await api.put(memoryURL.PUT(id), rest);
+    console.log("res", res.data);
+
+    return res.data;
   }
 );
 
@@ -144,19 +114,37 @@ const memorySlice = createSlice({
       state.myMemories = action.payload;
     });
     builder.addCase(deleteMemoryThunk.fulfilled, (state, action) => {
+      state.myMemories = state.myMemories.filter(
+        (memory) => memory._id !== action.payload
+      );
       state.memories = state.memories.filter(
         (memory) => memory._id !== action.payload
       );
     });
     builder.addCase(addMemoryThunk.fulfilled, (state, action) => {
-      state.memories.push(action.payload);
+      state.myMemories.push(action.payload);
+      if (action.payload.local == "public") {
+        state.memories.push(action.payload);
+      }
     });
     builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
-      const index = state.memories.findIndex(
-        (memory) => memory._id === action.payload._id
-      );
+      const index = state.myMemories.findIndex((memory) => {
+        return memory._id === action.payload._id;
+      });
       if (index !== -1) {
-        state.memories[index] = action.payload;
+        state.myMemories[index] = action.payload;
+      }
+// todo make reverse logic(my memories)
+
+      const globalIndex = state.memories.findIndex((memory) => {
+        return memory._id === action.payload._id;
+      });
+      if (action.payload.local == "private") {
+        state.memories = state.memories.filter((memory) => {
+          return memory._id !== action.payload._id;
+        });
+      } else if (globalIndex !== -1) {
+        state.memories[globalIndex] = action.payload;
       }
     });
   },

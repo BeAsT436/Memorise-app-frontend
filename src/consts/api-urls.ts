@@ -6,3 +6,9 @@ export const userURL = {
   SUBSCRIBE: (id:string) => `users/subscribe/${id}`,
   UNSUBSCRIBE:(id:string) => `users/unsubscribe/${id}`
 };
+export const memoryURL = {
+  ME: "memory/me",
+  ADD: "memory",
+  DELETE: (id:string)=>`memory/${id}`,
+  PUT: (id:string)=>`memory/${id}`
+}

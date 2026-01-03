@@ -28,6 +28,7 @@ export const Profile: FC = () => {
 
   const dispatch = useAppDispatch();
 
+
   useEffect(() => {
     dispatch(fetchMyMemories());
     if (authUser?.userId) dispatch(getProfile(authUser?.userId));

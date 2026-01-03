@@ -23,6 +23,7 @@ export const MainLayout = () => {
         <Button onClick={handleOpenForm}>+ add memory</Button>
       </header>
       <div className="flex flex-1 ">
+        {/* todo make adaptive design(hide sidebar into burger) */}
         <Sidebar />
         <main className="flex flex-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ">
           <Outlet />

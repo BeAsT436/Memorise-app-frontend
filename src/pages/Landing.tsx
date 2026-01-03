@@ -40,6 +40,7 @@ export const Landing = () => {
             }}
             size={"lg"}
             variant={"outline"}
+            className="bg-transparent"
           >
             sing in
           </Button>

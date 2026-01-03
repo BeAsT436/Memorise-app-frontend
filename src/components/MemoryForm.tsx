@@ -59,11 +59,11 @@ export const MemoryForm = () => {
   }, [form, memoryToEdit]);
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    
+
     if (!file) return;
 
-      const imgURL = await uploadImg(file);
-      form.setValue("img", imgURL);
+    const imgURL = await uploadImg(file);
+    form.setValue("img", imgURL);
   };
 
   const handleClose = () => {
@@ -72,6 +72,8 @@ export const MemoryForm = () => {
   };
 
   function onSubmit(values: z.infer<typeof validationSchema>) {
+    console.log("values: ", values);
+
     if (isEditing) {
       dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
       //! todo fix type of updateMemory

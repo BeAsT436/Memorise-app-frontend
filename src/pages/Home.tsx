@@ -1,24 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-import { fetchMemories, selectMemoriesState } from "@/redux/memorySlice";
-import { AppDispatch } from "@/redux/store";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectMemoriesState } from "@/redux/memorySlice";
 
 import { MemoryForm } from "@/components/MemoryForm";
 
 import { Card } from "@/components/Card";
 
-
-
 export const Home = () => {
-  const dispatch = useDispatch<AppDispatch>();
-
-
   const { memories } = useSelector(selectMemoriesState);
-  // useEffect(() => {
-  //   dispatch(fetchMemories());
-  // }, [dispatch]);
- 
-  
 
   return (
     <div className="p-4">
