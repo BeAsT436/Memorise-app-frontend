@@ -3,6 +3,7 @@ import { RootState } from "./store";
 import { getToken } from "@/utils/auth";
 import api from "@/api/api";
 import { memoryURL } from "@/consts/api-urls";
+import { toast } from "react-toastify";
 
 type Local = "private" | "public";
 
@@ -65,13 +66,22 @@ export const addMemoryThunk = createAsyncThunk(
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
-  async (memoryData: Partial<MemoryCreateDTO> & { id: string }) => {
-    const { id, ...rest } = memoryData;
+  async (memoryData: Partial<MemoryCreateDTO> & { id: string }, {rejectWithValue}) => {
+    
+    try {
+      const { id, ...rest } = memoryData;
 
     const res = await api.put(memoryURL.PUT(id), rest);
-    console.log("res", res.data);
-
+    console.log("res",JSON.stringify(res,null,2));
+    
+    toast.success("memory was successfully updated")
     return res.data;
+    
+    } catch (error) {
+      toast.error(error.message)
+      console.log("error",JSON.stringify(error,null,2));
+      return rejectWithValue(error.message)
+    }
   }
 );
 

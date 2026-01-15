@@ -13,6 +13,7 @@ import { Home } from "./pages/Home";
 import { MainLayout } from "./layouts/MainLayout";
 import { Users } from "./pages/Users";
 import { UserProfile } from "./pages/UserProfile";
+import { ToastContainer } from "react-toastify";
 
 
 const router = createBrowserRouter([
@@ -67,8 +68,11 @@ const router = createBrowserRouter([
   },
 ]);
 
+
+
 createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <RouterProvider router={router} />
+      <ToastContainer pauseOnFocusLoss draggable pauseOnHover />
     </Provider>
 );

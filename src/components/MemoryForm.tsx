@@ -15,12 +15,11 @@ import {
 } from "@/redux/memorySlice";
 import { useEffect, useMemo } from "react";
 import { uploadImg } from "@/utils/uploadImg";
-import { toast } from "react-toastify";
 
 const validationSchema = z.object({
   title: z
     .string()
-    .min(5, { message: "min length 5 symbols" })
+    .min(1, { message: "min length 5 symbols" })
     .max(50, { message: "max length 50 symbols" }),
   desc: z
     .string()
@@ -82,14 +81,10 @@ export const MemoryForm = () => {
 
         dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
         //! todo fix type of updateMemory
-
-        toast.success("successfully updated");
       } else {
         dispatch(addMemoryThunk(values));
-        toast.success("successfully added", { autoClose: 2000 });
       }
     } catch (error) {
-      toast.error(error.message);
       console.log(JSON.stringify(error, null, 2));
     } finally {
       dispatch(closeForm());
