@@ -44,7 +44,9 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
   };
 
   const handleOpenEditForm = () => {
-    dispatch(openEditForm(memory));
+    console.log("memory",memory);
+    
+    dispatch(openEditForm({...memory, img:defaultImg}));
   };
 
   const handleCloseModal = () => setOpen(false);
@@ -58,31 +60,6 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
       />
       {isOwner && (
         <div className="absolute right-1 top-1 bg-black bg-opacity-40 p-1 rounded-md flex gap-1">
-          {/* <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                className=" bg-black bg-opacity-5"
-                
-                size={"sm"}
-              >
-                <TrashIcon className="!size-6 text-red-500" />
-              </Button>
-            </AlertDialogTrigger>
-
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your memory.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleDelete(_id)}>Delete</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog> */}
           <Button
             onClick={() => setOpen(true)}
             className=" bg-black bg-opacity-5"
@@ -110,7 +87,8 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
       </CardContent>
 
       <Modal title="Are you absolutely sure?" onClose={handleCloseModal} open={open}>
-        <Button onClick={() => handleDelete("")}>deleting</Button>
+        <p className="text-gray-500 pb-3">this action will delete the memory forever</p>
+        <Button onClick={() => handleDelete(_id)}>deleting</Button>
       </Modal>
     </ShadcnCard>
   );

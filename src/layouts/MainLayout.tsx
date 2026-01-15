@@ -6,15 +6,16 @@ import { useDispatch } from "react-redux";
 import { fetchMemories, openForm } from "@/redux/memorySlice";
 import { useEffect } from "react";
 import { AppDispatch } from "@/redux/store";
+import { ToastContainer } from "react-toastify";
 
 export const MainLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const handleOpenForm = () => {
     dispatch(openForm());
   };
-  useEffect(()=>{
-    dispatch(fetchMemories())
-  },[dispatch])
+  useEffect(() => {
+    dispatch(fetchMemories());
+  }, [dispatch]);
   return (
     <div className="flex flex-col min-h-screen">
       <header className="bg-blue-600 text-white p-4 flex justify-between items-center ">
@@ -29,6 +30,7 @@ export const MainLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ToastContainer pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };

@@ -15,6 +15,7 @@ import {
 } from "@/redux/memorySlice";
 import { useEffect, useMemo } from "react";
 import { uploadImg } from "@/utils/uploadImg";
+import { toast } from "react-toastify";
 
 const validationSchema = z.object({
   title: z
@@ -71,16 +72,28 @@ export const MemoryForm = () => {
     dispatch(closeForm());
   };
 
-  function onSubmit(values: z.infer<typeof validationSchema>) {
+  function addOrEditMemory(values: z.infer<typeof validationSchema>) {
     console.log("values: ", values);
+    console.log("isEditing", isEditing);
 
-    if (isEditing) {
-      dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
-      //! todo fix type of updateMemory
-    } else {
-      dispatch(addMemoryThunk(values));
+    try {
+      if (isEditing) {
+        console.log("_id:", memoryToEdit._id);
+
+        dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
+        //! todo fix type of updateMemory
+
+        toast.success("successfully updated");
+      } else {
+        dispatch(addMemoryThunk(values));
+        toast.success("successfully added", { autoClose: 2000 });
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(JSON.stringify(error, null, 2));
+    } finally {
+      dispatch(closeForm());
     }
-    dispatch(closeForm());
   }
   const isOpen = useMemo(() => {
     return (
@@ -106,7 +119,7 @@ export const MemoryForm = () => {
       <Form {...form}>
         <form
           className="bg-white p-6 rounded-md max-w-2xl space-y-4"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(addOrEditMemory)}
         >
           <FormField
             name="title"
