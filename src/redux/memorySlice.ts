@@ -49,7 +49,7 @@ export const deleteMemoryThunk = createAsyncThunk(
     await api.delete(memoryURL.DELETE(id));
 
     return id;
-  }
+  },
 );
 
 export const addMemoryThunk = createAsyncThunk(
@@ -61,28 +61,29 @@ export const addMemoryThunk = createAsyncThunk(
 
     const res = await api.post(memoryURL.ADD, memoryData);
     return res.data;
-  }
+  },
 );
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
-  async (memoryData: Partial<MemoryCreateDTO> & { id: string }, {rejectWithValue}) => {
-    
+  async (
+    memoryData: Partial<MemoryCreateDTO> & { id: string },
+    { rejectWithValue },
+  ) => {
     try {
       const { id, ...rest } = memoryData;
 
-    const res = await api.put(memoryURL.PUT(id), rest);
-    console.log("res",JSON.stringify(res,null,2));
-    
-    toast.success("memory was successfully updated")
-    return res.data;
-    
+      const res = await api.put(memoryURL.PUT(id), rest);
+      console.log("res", JSON.stringify(res, null, 2));
+
+      toast.success("memory was successfully updated");
+      return res.data;
     } catch (error) {
-      toast.error(error.message)
-      console.log("error",JSON.stringify(error,null,2));
-      return rejectWithValue(error.message)
+      toast.error(error.message);
+      console.log("error", JSON.stringify(error, null, 2));
+      return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 const initialState: {
@@ -125,10 +126,10 @@ const memorySlice = createSlice({
     });
     builder.addCase(deleteMemoryThunk.fulfilled, (state, action) => {
       state.myMemories = state.myMemories.filter(
-        (memory) => memory._id !== action.payload
+        (memory) => memory._id !== action.payload,
       );
       state.memories = state.memories.filter(
-        (memory) => memory._id !== action.payload
+        (memory) => memory._id !== action.payload,
       );
     });
     builder.addCase(addMemoryThunk.fulfilled, (state, action) => {
@@ -144,7 +145,7 @@ const memorySlice = createSlice({
       if (index !== -1) {
         state.myMemories[index] = action.payload;
       }
-// todo make reverse logic(my memories)
+      // todo make reverse logic(my memories)
 
       const globalIndex = state.memories.findIndex((memory) => {
         return memory._id === action.payload._id;

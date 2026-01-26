@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   email: z
@@ -57,7 +58,7 @@ export const AuthForm = ({ isLogin }: Props) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
+ async function onSubmit(values: z.infer<typeof schema>) {
     if (!isLogin) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...rest } = values as z.infer<
@@ -72,21 +73,40 @@ export const AuthForm = ({ isLogin }: Props) => {
       ? "http://localhost:3001/api/auth/register"
       : "http://localhost:3001/api/auth/login";
 
-    fetch(fetchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-
-        dispatch(setUser(data));
+    try {
+      const res = await fetch(fetchUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
+      const data = await res.json()
+      console.log("res: ",res);
+      if (res.status === 401 || res.status === 404){
+        
+        toast.error(data.message)
+        return
+      }
+      
+      dispatch(setUser(data))
+    } catch (error) {
+      console.log("error: ",JSON.stringify(error, null, 2));
+      
+      
+    }
+    finally{
+      form.reset();
+    }
 
-    form.reset();
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       console.log(data);
+
+    //       dispatch(setUser(data));
+    //     });
+
+    //   
   }
 
   return (
