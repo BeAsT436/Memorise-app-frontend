@@ -74,13 +74,13 @@ export const updateMemoryThunk = createAsyncThunk(
       const { id, ...rest } = memoryData;
 
       const res = await api.put(memoryURL.PUT(id), rest);
-      console.log("res", JSON.stringify(res, null, 2));
 
       toast.success("memory was successfully updated");
       return res.data;
     } catch (error) {
-      toast.error(error.message);
-      console.log("error", JSON.stringify(error, null, 2));
+      console.log("error: ",error);
+      
+      toast.error(error?.response?.data?.message);
       return rejectWithValue(error.message);
     }
   },
