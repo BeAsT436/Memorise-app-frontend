@@ -10,6 +10,7 @@ import { AppDispatch } from "@/redux/store";
 import {
   addMemoryThunk,
   closeForm,
+  MemoryUpdateDTO,
   selectMemoryForm,
   updateMemoryThunk,
 } from "@/redux/memorySlice";
@@ -31,7 +32,7 @@ const validationSchema = z.object({
 
 export const MemoryForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const memoryToEdit = useSelector(selectMemoryForm);
+  const memoryToEdit = useSelector(selectMemoryForm) as MemoryUpdateDTO;
 
   const isEditing = memoryToEdit && Object.keys(memoryToEdit).length > 0;
 
@@ -77,10 +78,9 @@ export const MemoryForm = () => {
 
     try {
       if (isEditing) {
-        console.log("_id:", memoryToEdit._id);
+        console.log("id:", memoryToEdit.id);
 
-        dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
-        //! todo fix type of updateMemory
+        dispatch(updateMemoryThunk({ ...values, id: memoryToEdit.id }));
       } else {
         dispatch(addMemoryThunk(values));
       }

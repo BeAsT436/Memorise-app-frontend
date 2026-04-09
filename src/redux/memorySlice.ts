@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 type Local = "private" | "public";
 
 export interface Memory {
-  _id: string;
   userId: string;
   local: Local;
   title: string;
@@ -17,6 +16,10 @@ export interface Memory {
   createdAt: string;
   updatedAt: string;
   id: string;
+}
+
+export interface MemoryUpdateDTO extends MemoryCreateDTO{
+  id:string
 }
 
 export interface MemoryCreateDTO {
@@ -67,12 +70,13 @@ export const addMemoryThunk = createAsyncThunk(
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
   async (
-    memoryData: Partial<MemoryCreateDTO> & { id: string },
+    memoryData: Partial<MemoryUpdateDTO>,
     { rejectWithValue },
   ) => {
     try {
       const { id, ...rest } = memoryData;
-
+      if(!id)return
+      
       const res = await api.put(memoryURL.PUT(id), rest);
 
       toast.success("memory was successfully updated");
@@ -87,7 +91,7 @@ export const updateMemoryThunk = createAsyncThunk(
 );
 
 const initialState: {
-  memoryForm: MemoryCreateDTO | null;
+  memoryForm: MemoryCreateDTO |MemoryUpdateDTO| null;
   memories: Memory[];
   loading: boolean;
   myMemories: Memory[];
@@ -126,10 +130,10 @@ const memorySlice = createSlice({
     });
     builder.addCase(deleteMemoryThunk.fulfilled, (state, action) => {
       state.myMemories = state.myMemories.filter(
-        (memory) => memory._id !== action.payload,
+        (memory) => memory.id !== action.payload,
       );
       state.memories = state.memories.filter(
-        (memory) => memory._id !== action.payload,
+        (memory) => memory.id !== action.payload,
       );
     });
     builder.addCase(addMemoryThunk.fulfilled, (state, action) => {
@@ -140,7 +144,7 @@ const memorySlice = createSlice({
     });
     builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
       const index = state.myMemories.findIndex((memory) => {
-        return memory._id === action.payload._id;
+        return memory.id === action.payload._id;
       });
       if (index !== -1) {
         state.myMemories[index] = action.payload;
@@ -148,11 +152,11 @@ const memorySlice = createSlice({
       // todo make reverse logic(my memories)
 
       const globalIndex = state.memories.findIndex((memory) => {
-        return memory._id === action.payload._id;
+        return memory.id === action.payload._id;
       });
       if (action.payload.local == "private") {
         state.memories = state.memories.filter((memory) => {
-          return memory._id !== action.payload._id;
+          return memory.id !== action.payload._id;
         });
       } else if (globalIndex !== -1) {
         state.memories[globalIndex] = action.payload;
