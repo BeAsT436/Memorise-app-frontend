@@ -1,6 +1,7 @@
+
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { getToken } from "@/utils/auth";
+import { getToken } from "@/utils/token";
 import api from "@/api/api";
 import { memoryURL } from "@/consts/api-urls";
 import { toast } from "react-toastify";
@@ -18,8 +19,8 @@ export interface Memory {
   id: string;
 }
 
-export interface MemoryUpdateDTO extends MemoryCreateDTO{
-  id:string
+export interface MemoryUpdateDTO extends MemoryCreateDTO {
+  id: string;
 }
 
 export interface MemoryCreateDTO {
@@ -69,29 +70,42 @@ export const addMemoryThunk = createAsyncThunk(
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
-  async (
-    memoryData: Partial<MemoryUpdateDTO>,
-    { rejectWithValue },
-  ) => {
+  async (memoryData: Partial<MemoryUpdateDTO>, { rejectWithValue }) => {
     try {
       const { id, ...rest } = memoryData;
-      if(!id)return
-      
+      if (!id) return;
+
       const res = await api.put(memoryURL.PUT(id), rest);
 
       toast.success("memory was successfully updated");
       return res.data;
     } catch (error) {
-      console.log("error: ",error);
-      
+      console.log("error: ", error);
+
       toast.error(error?.response?.data?.message);
       return rejectWithValue(error.message);
     }
   },
 );
+type ChangeLocalMemoryResponse = {local:Local,id:string}
+export const changeLocalMemoryThunk = createAsyncThunk<ChangeLocalMemoryResponse,string>(
+  "memory/local",
+  // todo fix type
+  async (id:string) => {
+    try {
+      const res = await api.put(memoryURL.LOCAL(id));
+      console.log(res.data);
+      console.log(id);
 
+      return { local: res.data, id };
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  },
+);
+// todo ensure we filter the memory after updating the local field
 const initialState: {
-  memoryForm: MemoryCreateDTO |MemoryUpdateDTO| null;
+  memoryForm: MemoryCreateDTO | MemoryUpdateDTO | null;
   memories: Memory[];
   loading: boolean;
   myMemories: Memory[];
@@ -144,6 +158,7 @@ const memorySlice = createSlice({
     });
     builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
       const index = state.myMemories.findIndex((memory) => {
+        // todo remove all _id
         return memory.id === action.payload._id;
       });
       if (index !== -1) {
@@ -161,6 +176,16 @@ const memorySlice = createSlice({
       } else if (globalIndex !== -1) {
         state.memories[globalIndex] = action.payload;
       }
+    });
+
+    builder.addCase(changeLocalMemoryThunk.fulfilled, (state, action) => {
+      const { local, id } = action.payload
+      const memory = state.memories.find((memory) => memory.id === id);
+
+      if (memory) memory.local = local;
+
+      const myMemory = state.myMemories.find((memory) => memory.id === id);
+      if (myMemory) myMemory.local = local;
     });
   },
 });

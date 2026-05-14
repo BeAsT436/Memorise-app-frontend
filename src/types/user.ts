@@ -1,6 +1,4 @@
-export type TUser = {
-  email: string;
-  name: string;
+export type Token = {
   userId: string;
   iat: number;
   exp: number;

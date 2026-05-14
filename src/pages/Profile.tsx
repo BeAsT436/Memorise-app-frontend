@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
-import { logout, selectAuthState } from "@/redux/authSlice";
+import { logout} from "@/redux/authSlice";
 import { useAppDispatch } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -11,19 +11,18 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { fetchMyMemories, selectMemoriesState } from "@/redux/memorySlice";
-import { getProfile, selectUserState, updateUser } from "@/redux/userSlice";
-import { uploadImg } from "@/utils/uploadImg";
+import { selectUserState, updateUser } from "@/redux/userSlice";
+// import { uploadImg } from "@/utils/uploadImg";
 import { MemoryForm } from "@/components/MemoryForm";
 import { baseAvatar } from "@/consts/baseAvatar";
 
 export const Profile: FC = () => {
-  const { user: authUser } = useSelector(selectAuthState);
   const { user } = useSelector(selectUserState);
   const { myMemories } = useSelector(selectMemoriesState);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [isUpload, setIsUpload] = useState(false);
+  const [isUpload, _setIsUpload] = useState(false);
   const [avatar, setAvatar] = useState(user?.avatar || baseAvatar);
 
   const dispatch = useAppDispatch();
@@ -31,8 +30,8 @@ export const Profile: FC = () => {
 
   useEffect(() => {
     dispatch(fetchMyMemories());
-    if (authUser?.userId) dispatch(getProfile(authUser?.userId));
-  }, [dispatch, authUser?.userId]);
+  }, [dispatch]);
+
   //todo fix close edit mode
   useEffect(() => {
     if (user) {
@@ -53,19 +52,19 @@ export const Profile: FC = () => {
     setIsEditing(false);
   };
 
-  const handleChangeAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  // const handleChangeAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
 
-    if (!file) return;
+  //   if (!file) return;
 
-    setIsUpload(true);
+  //   setIsUpload(true);
 
-    const URL = await uploadImg(file);
-    if (URL) {
-      setAvatar(URL);
-    }
-    setIsUpload(false);
-  };
+  //   const URL = await uploadImg(file);
+  //   if (URL) {
+  //     setAvatar(URL);
+  //   }
+  //   setIsUpload(false);
+  // };
 
   return (
     <div className="w-full p-4 bg-inherit space-y-4">
@@ -94,17 +93,17 @@ export const Profile: FC = () => {
             src={avatar}
             alt=""
           />
-          {isEditing && (
+         {/* {isEditing && (
             <div>
               <input
                 onChange={handleChangeAvatar}
-                // className="hidden"
+            className="hidden"
                 type="file"
                 accept="image/*"
               />
               <Button>change</Button>
             </div>
-          )}
+          )} */}
 
           {isEditing ? (
             <div className="flex flex-col gap-2">
@@ -139,7 +138,7 @@ export const Profile: FC = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
         {myMemories.map((memory) => (
-          <Card  memory={memory} key={memory._id} />
+          <Card  memory={memory} key={memory.id} />
         ))}
       </div>
       <MemoryForm />
