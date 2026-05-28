@@ -1,4 +1,3 @@
-
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { getToken } from "@/utils/token";
@@ -87,11 +86,14 @@ export const updateMemoryThunk = createAsyncThunk(
     }
   },
 );
-type ChangeLocalMemoryResponse = {local:Local,id:string}
-export const changeLocalMemoryThunk = createAsyncThunk<ChangeLocalMemoryResponse,string>(
+type ChangeLocalMemoryResponse = { local: Local; id: string };
+export const changeLocalMemoryThunk = createAsyncThunk<
+  ChangeLocalMemoryResponse,
+  string
+>(
   "memory/local",
   // todo fix type
-  async (id:string) => {
+  async (id: string) => {
     try {
       const res = await api.put(memoryURL.LOCAL(id));
       console.log(res.data);
@@ -103,7 +105,7 @@ export const changeLocalMemoryThunk = createAsyncThunk<ChangeLocalMemoryResponse
     }
   },
 );
-// todo ensure we filter the memory after updating the local field
+
 const initialState: {
   memoryForm: MemoryCreateDTO | MemoryUpdateDTO | null;
   memories: Memory[];
@@ -179,13 +181,24 @@ const memorySlice = createSlice({
     });
 
     builder.addCase(changeLocalMemoryThunk.fulfilled, (state, action) => {
-      const { local, id } = action.payload
-      const memory = state.memories.find((memory) => memory.id === id);
-
-      if (memory) memory.local = local;
+      const { local, id } = action.payload;
 
       const myMemory = state.myMemories.find((memory) => memory.id === id);
-      if (myMemory) myMemory.local = local;
+      if (myMemory) {
+        myMemory.local = local;
+      }
+
+      if (local === "private") {
+        state.memories = state.memories.filter((memory) => memory.id !== id);
+      } else {
+        const memory = state.memories.find((memory) => memory.id === id);
+        if (memory) {
+          memory.local = local;
+        }
+        if (myMemory) {
+          state.memories.push(myMemory);
+        }
+      }
     });
   },
 });

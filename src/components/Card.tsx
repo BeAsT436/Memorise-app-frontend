@@ -1,5 +1,10 @@
 import { selectAuthState } from "@/redux/authSlice";
-import { Memory, changeLocalMemoryThunk, deleteMemoryThunk, openEditForm } from "@/redux/memorySlice";
+import {
+  Memory,
+  changeLocalMemoryThunk,
+  deleteMemoryThunk,
+  openEditForm,
+} from "@/redux/memorySlice";
 import { AppDispatch } from "@/redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "./ui/button";
@@ -44,13 +49,12 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
     dispatch(deleteMemoryThunk(id));
   };
 
-  const handleChangeLocal = (id: string)=>{
-    dispatch(changeLocalMemoryThunk(id))
-    
-  }
+  const handleChangeLocal = (id: string) => {
+    dispatch(changeLocalMemoryThunk(id));
+  };
 
   const handleOpenEditForm = () => {
-    dispatch(openEditForm({...memory, img:defaultImg}));
+    dispatch(openEditForm({ ...memory, img: defaultImg }));
   };
 
   const handleCloseModal = () => setOpen(false);
@@ -88,14 +92,21 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
         <p className="text-sm text-gray-500 mt-2 text-right">
           created: {format(new Date(createdAt), "PPP")}
         </p>
-        <Button onClick={()=>handleChangeLocal(id)}>
-          {local}
-        </Button>
-        {/* todo fix local memory state to show correct name*/}
+        {isOwner && (
+          <Button onClick={() => handleChangeLocal(id)}>
+            {local === "private" ? "public" : "private"}
+          </Button>
+        )}
       </CardContent>
 
-      <Modal title="Are you absolutely sure?" onClose={handleCloseModal} open={open}>
-        <p className="text-gray-500 pb-3">this action will delete the memory forever</p>
+      <Modal
+        title="Are you absolutely sure?"
+        onClose={handleCloseModal}
+        open={open}
+      >
+        <p className="text-gray-500 pb-3">
+          this action will delete the memory forever
+        </p>
         <Button onClick={() => handleDelete(id)}>deleting</Button>
       </Modal>
     </ShadcnCard>
