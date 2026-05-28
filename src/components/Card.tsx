@@ -1,5 +1,10 @@
 import { selectAuthState } from "@/redux/authSlice";
-import { Memory, deleteMemoryThunk, openEditForm } from "@/redux/memorySlice";
+import {
+  Memory,
+  changeLocalMemoryThunk,
+  deleteMemoryThunk,
+  openEditForm,
+} from "@/redux/memorySlice";
 import { AppDispatch } from "@/redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "./ui/button";
@@ -28,25 +33,28 @@ const isValidUrl = (url: string): boolean => {
 };
 
 export const Card: React.FC<CardProps> = ({ memory }) => {
-  const { user } = useSelector(selectAuthState);
-  const { img, title, desc, _id, createdAt } = memory;
+  const { token } = useSelector(selectAuthState);
+  const { img, title, desc, id, createdAt, local } = memory;
   const defaultImg =
     "https://upload.wikimedia.org/wikipedia/commons/7/77/Pirogue_running_on_the_Mekong_at_golden_hour_between_Don_Det_and_Don_Khon_Laos.jpg";
 
   const [open, setOpen] = useState(false);
 
   const validUrl = isValidUrl(img) ? img : defaultImg;
-  const isOwner = user?.userId === memory.userId;
+  const isOwner = token?.userId === memory.userId;
   const dispatch = useDispatch<AppDispatch>();
   //todo add modal window to confirm deleting
+
   const handleDelete = (id: string) => {
     dispatch(deleteMemoryThunk(id));
   };
 
+  const handleChangeLocal = (id: string) => {
+    dispatch(changeLocalMemoryThunk(id));
+  };
+
   const handleOpenEditForm = () => {
-    console.log("memory",memory);
-    
-    dispatch(openEditForm({...memory, img:defaultImg}));
+    dispatch(openEditForm({ ...memory, img: defaultImg }));
   };
 
   const handleCloseModal = () => setOpen(false);
@@ -84,11 +92,22 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
         <p className="text-sm text-gray-500 mt-2 text-right">
           created: {format(new Date(createdAt), "PPP")}
         </p>
+        {isOwner && (
+          <Button onClick={() => handleChangeLocal(id)}>
+            {local === "private" ? "public" : "private"}
+          </Button>
+        )}
       </CardContent>
 
-      <Modal title="Are you absolutely sure?" onClose={handleCloseModal} open={open}>
-        <p className="text-gray-500 pb-3">this action will delete the memory forever</p>
-        <Button onClick={() => handleDelete(_id)}>deleting</Button>
+      <Modal
+        title="Are you absolutely sure?"
+        onClose={handleCloseModal}
+        open={open}
+      >
+        <p className="text-gray-500 pb-3">
+          this action will delete the memory forever
+        </p>
+        <Button onClick={() => handleDelete(id)}>deleting</Button>
       </Modal>
     </ShadcnCard>
   );

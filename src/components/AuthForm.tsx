@@ -13,7 +13,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/authSlice";
+import { setAuthToken } from "@/redux/authSlice";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   email: z
@@ -57,9 +58,8 @@ export const AuthForm = ({ isLogin }: Props) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     if (!isLogin) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...rest } = values as z.infer<
         typeof registerSchema
       >;
@@ -67,26 +67,34 @@ export const AuthForm = ({ isLogin }: Props) => {
     }
 
     console.log(!isLogin ? "register data:" : "login data:", values);
-
+    // todo move to api-urls
     const fetchUrl = !isLogin
       ? "http://localhost:3001/api/auth/register"
       : "http://localhost:3001/api/auth/login";
 
-    fetch(fetchUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-
-        dispatch(setUser(data));
+    try {
+      // todo move fetch to authSlice and add response type
+      const res = await fetch(fetchUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
+      const data = await res.json();
+      console.log("res: ", res);
+      // todo extract code statuses to utils
+      if (res.status === 401 || res.status === 404 || res.status === 400) {
+        toast.error(data.message);
+        return;
+      }
 
-    form.reset();
+      dispatch(setAuthToken(data));
+    } catch (error) {
+      console.log("error: ", JSON.stringify(error, null, 2));
+    } finally {
+      form.reset();
+    }
   }
 
   return (

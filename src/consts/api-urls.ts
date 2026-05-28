@@ -10,5 +10,6 @@ export const memoryURL = {
   ME: "memory/me",
   ADD: "memory",
   DELETE: (id:string)=>`memory/${id}`,
-  PUT: (id:string)=>`memory/${id}`
+  PUT: (id:string)=>`memory/${id}`,
+  LOCAL: (id:string)=>`memory/local/${id}`
 }

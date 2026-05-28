@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { getToken } from "@/utils/auth";
+import { getToken } from "@/utils/token";
 import api from "@/api/api";
 import { memoryURL } from "@/consts/api-urls";
+import { toast } from "react-toastify";
 
 type Local = "private" | "public";
 
 export interface Memory {
-  _id: string;
   userId: string;
   local: Local;
   title: string;
@@ -15,6 +15,10 @@ export interface Memory {
   img: string;
   createdAt: string;
   updatedAt: string;
+  id: string;
+}
+
+export interface MemoryUpdateDTO extends MemoryCreateDTO {
   id: string;
 }
 
@@ -48,7 +52,7 @@ export const deleteMemoryThunk = createAsyncThunk(
     await api.delete(memoryURL.DELETE(id));
 
     return id;
-  }
+  },
 );
 
 export const addMemoryThunk = createAsyncThunk(
@@ -60,23 +64,50 @@ export const addMemoryThunk = createAsyncThunk(
 
     const res = await api.post(memoryURL.ADD, memoryData);
     return res.data;
-  }
+  },
 );
 
 export const updateMemoryThunk = createAsyncThunk(
   "memory/update",
-  async (memoryData: Partial<MemoryCreateDTO> & { id: string }) => {
-    const { id, ...rest } = memoryData;
+  async (memoryData: Partial<MemoryUpdateDTO>, { rejectWithValue }) => {
+    try {
+      const { id, ...rest } = memoryData;
+      if (!id) return;
 
-    const res = await api.put(memoryURL.PUT(id), rest);
-    console.log("res", res.data);
+      const res = await api.put(memoryURL.PUT(id), rest);
 
-    return res.data;
-  }
+      toast.success("memory was successfully updated");
+      return res.data;
+    } catch (error) {
+      console.log("error: ", error);
+
+      toast.error(error?.response?.data?.message);
+      return rejectWithValue(error.message);
+    }
+  },
+);
+type ChangeLocalMemoryResponse = { local: Local; id: string };
+export const changeLocalMemoryThunk = createAsyncThunk<
+  ChangeLocalMemoryResponse,
+  string
+>(
+  "memory/local",
+  // todo fix type
+  async (id: string) => {
+    try {
+      const res = await api.put(memoryURL.LOCAL(id));
+      console.log(res.data);
+      console.log(id);
+
+      return { local: res.data, id };
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  },
 );
 
 const initialState: {
-  memoryForm: MemoryCreateDTO | null;
+  memoryForm: MemoryCreateDTO | MemoryUpdateDTO | null;
   memories: Memory[];
   loading: boolean;
   myMemories: Memory[];
@@ -115,10 +146,10 @@ const memorySlice = createSlice({
     });
     builder.addCase(deleteMemoryThunk.fulfilled, (state, action) => {
       state.myMemories = state.myMemories.filter(
-        (memory) => memory._id !== action.payload
+        (memory) => memory.id !== action.payload,
       );
       state.memories = state.memories.filter(
-        (memory) => memory._id !== action.payload
+        (memory) => memory.id !== action.payload,
       );
     });
     builder.addCase(addMemoryThunk.fulfilled, (state, action) => {
@@ -129,22 +160,44 @@ const memorySlice = createSlice({
     });
     builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
       const index = state.myMemories.findIndex((memory) => {
-        return memory._id === action.payload._id;
+        // todo remove all _id
+        return memory.id === action.payload._id;
       });
       if (index !== -1) {
         state.myMemories[index] = action.payload;
       }
-// todo make reverse logic(my memories)
+      // todo make reverse logic(my memories)
 
       const globalIndex = state.memories.findIndex((memory) => {
-        return memory._id === action.payload._id;
+        return memory.id === action.payload._id;
       });
       if (action.payload.local == "private") {
         state.memories = state.memories.filter((memory) => {
-          return memory._id !== action.payload._id;
+          return memory.id !== action.payload._id;
         });
       } else if (globalIndex !== -1) {
         state.memories[globalIndex] = action.payload;
+      }
+    });
+
+    builder.addCase(changeLocalMemoryThunk.fulfilled, (state, action) => {
+      const { local, id } = action.payload;
+
+      const myMemory = state.myMemories.find((memory) => memory.id === id);
+      if (myMemory) {
+        myMemory.local = local;
+      }
+
+      if (local === "private") {
+        state.memories = state.memories.filter((memory) => memory.id !== id);
+      } else {
+        const memory = state.memories.find((memory) => memory.id === id);
+        if (memory) {
+          memory.local = local;
+        }
+        if (myMemory) {
+          state.memories.push(myMemory);
+        }
       }
     });
   },

@@ -1,7 +1,7 @@
 import { baseURL, userURL } from "@/consts/api-urls";
 import { RootState } from "./store";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getToken } from "@/utils/auth";
+import { getToken } from "@/utils/token";
 import axios from "axios";
 
 interface UpdateDTO {

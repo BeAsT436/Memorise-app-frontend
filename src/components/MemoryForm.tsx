@@ -10,17 +10,17 @@ import { AppDispatch } from "@/redux/store";
 import {
   addMemoryThunk,
   closeForm,
+  MemoryUpdateDTO,
   selectMemoryForm,
   updateMemoryThunk,
 } from "@/redux/memorySlice";
 import { useEffect, useMemo } from "react";
 import { uploadImg } from "@/utils/uploadImg";
-import { toast } from "react-toastify";
 
 const validationSchema = z.object({
   title: z
     .string()
-    .min(5, { message: "min length 5 symbols" })
+    .min(1, { message: "min length 5 symbols" })
     .max(50, { message: "max length 50 symbols" }),
   desc: z
     .string()
@@ -32,7 +32,7 @@ const validationSchema = z.object({
 
 export const MemoryForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const memoryToEdit = useSelector(selectMemoryForm);
+  const memoryToEdit = useSelector(selectMemoryForm) as MemoryUpdateDTO;
 
   const isEditing = memoryToEdit && Object.keys(memoryToEdit).length > 0;
 
@@ -78,18 +78,13 @@ export const MemoryForm = () => {
 
     try {
       if (isEditing) {
-        console.log("_id:", memoryToEdit._id);
+        console.log("id:", memoryToEdit.id);
 
-        dispatch(updateMemoryThunk({ ...values, id: memoryToEdit._id }));
-        //! todo fix type of updateMemory
-
-        toast.success("successfully updated");
+        dispatch(updateMemoryThunk({ ...values, id: memoryToEdit.id }));
       } else {
         dispatch(addMemoryThunk(values));
-        toast.success("successfully added", { autoClose: 2000 });
       }
     } catch (error) {
-      toast.error(error.message);
       console.log(JSON.stringify(error, null, 2));
     } finally {
       dispatch(closeForm());

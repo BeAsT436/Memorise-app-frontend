@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { fetchMemories, openForm } from "@/redux/memorySlice";
 import { useEffect } from "react";
 import { AppDispatch } from "@/redux/store";
-import { ToastContainer } from "react-toastify";
+
 
 export const MainLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +30,7 @@ export const MainLayout = () => {
           <Outlet />
         </main>
       </div>
-      <ToastContainer pauseOnFocusLoss draggable pauseOnHover />
+      
     </div>
   );
 };

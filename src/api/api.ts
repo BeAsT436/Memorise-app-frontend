@@ -1,5 +1,5 @@
 import { baseURL } from "@/consts/api-urls";
-import { getToken } from "@/utils/auth";
+import { getToken } from "@/utils/token";
 import axios, { InternalAxiosRequestConfig } from "axios";
 
 const api = axios.create({ baseURL });

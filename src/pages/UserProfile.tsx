@@ -41,7 +41,7 @@ export const UserProfile = () => {
 
       <div>
         {userMemories.map((memory) => (
-          <Card memory={memory} key={memory._id} />
+          <Card memory={memory} key={memory.id} />
         ))}
       </div>
     </div>
