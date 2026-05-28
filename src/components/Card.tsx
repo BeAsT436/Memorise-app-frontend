@@ -93,7 +93,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
           created: {format(new Date(createdAt), "PPP")}
         </p>
         {isOwner && (
-          <Button onClick={() => handleChangeLocal(id)}>
+          <Button className="my-5" onClick={() => handleChangeLocal(id)}>
             {local === "private" ? "public" : "private"}
           </Button>
         )}
