@@ -13,3 +13,7 @@ export const memoryURL = {
   PUT: (id:string)=>`memory/${id}`,
   LOCAL: (id:string)=>`memory/local/${id}`
 }
+export const authURL = {
+  REGISTER: `auth/register`,
+  LOGIN: `auth/login`
+}

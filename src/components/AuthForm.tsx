@@ -15,6 +15,8 @@ import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setAuthToken } from "@/redux/authSlice";
 import { toast } from "react-toastify";
+import { authURL, baseURL } from "@/consts/api-urls";
+import { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "@/consts/status_code";
 
 const loginSchema = z.object({
   email: z
@@ -67,10 +69,9 @@ export const AuthForm = ({ isLogin }: Props) => {
     }
 
     console.log(!isLogin ? "register data:" : "login data:", values);
-    // todo move to api-urls
     const fetchUrl = !isLogin
-      ? "http://localhost:3001/api/auth/register"
-      : "http://localhost:3001/api/auth/login";
+      ? baseURL + authURL.REGISTER
+      : baseURL + authURL.LOGIN;
 
     try {
       // todo move fetch to authSlice and add response type
@@ -82,9 +83,11 @@ export const AuthForm = ({ isLogin }: Props) => {
         body: JSON.stringify(values),
       });
       const data = await res.json();
-      console.log("res: ", res);
-      // todo extract code statuses to utils
-      if (res.status === 401 || res.status === 404 || res.status === 400) {
+      if (
+        res.status === UNAUTHORIZED ||
+        res.status === NOT_FOUND ||
+        res.status === BAD_REQUEST
+      ) {
         toast.error(data.message);
         return;
       }
