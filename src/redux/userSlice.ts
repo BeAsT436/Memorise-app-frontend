@@ -113,7 +113,6 @@ interface User {
   role: string;
   updatedAt: string;
   avatar: string;
-  _id: string;
   id: string
 }
 
