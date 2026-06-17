@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
-import { logout} from "@/redux/authSlice";
+import { logout } from "@/redux/authSlice";
 import { useAppDispatch } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -27,12 +27,10 @@ export const Profile: FC = () => {
 
   const dispatch = useAppDispatch();
 
-
   useEffect(() => {
     dispatch(fetchMyMemories());
   }, [dispatch]);
 
-  //todo fix close edit mode
   useEffect(() => {
     if (user) {
       setName(user.name);
@@ -93,7 +91,7 @@ export const Profile: FC = () => {
             src={avatar}
             alt=""
           />
-         {/* {isEditing && (
+          {/* {isEditing && (
             <div>
               <input
                 onChange={handleChangeAvatar}
@@ -125,9 +123,7 @@ export const Profile: FC = () => {
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-semibold text-white">
-                {user?.name}
-              </h2>
+              <h2 className="text-xl font-semibold text-white">{user?.name}</h2>
               <p className="text-white/70">{user?.email}</p>
             </div>
           )}
@@ -138,7 +134,7 @@ export const Profile: FC = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
         {myMemories.map((memory) => (
-          <Card  memory={memory} key={memory.id} />
+          <Card memory={memory} key={memory.id} />
         ))}
       </div>
       <MemoryForm />

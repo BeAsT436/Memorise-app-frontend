@@ -4,6 +4,7 @@ import { getToken } from "@/utils/token";
 import api from "@/api/api";
 import { memoryURL } from "@/consts/api-urls";
 import { toast } from "react-toastify";
+import { AppError } from "@/types/AppError";
 
 type Local = "private" | "public";
 
@@ -79,32 +80,30 @@ export const updateMemoryThunk = createAsyncThunk(
       toast.success("memory was successfully updated");
       return res.data;
     } catch (error) {
-      console.log("error: ", error);
-
-      toast.error(error?.response?.data?.message);
-      return rejectWithValue(error.message);
+      toast.error((error as AppError)?.response?.data?.message);
+      return rejectWithValue({
+        message: (error as AppError)?.response?.data?.message,
+      });
     }
   },
 );
 type ChangeLocalMemoryResponse = { local: Local; id: string };
+
 export const changeLocalMemoryThunk = createAsyncThunk<
   ChangeLocalMemoryResponse,
   string
->(
-  "memory/local",
-  // todo fix type
-  async (id: string) => {
-    try {
-      const res = await api.put(memoryURL.LOCAL(id));
-      console.log(res.data);
-      console.log(id);
+>("memory/local", async (id: string, { rejectWithValue }) => {
+  try {
+    const res = await api.put(memoryURL.LOCAL(id));
 
-      return { local: res.data, id };
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    }
-  },
-);
+    return { local: res.data, id };
+  } catch (error) {
+    toast.error((error as AppError)?.response?.data?.message);
+    return rejectWithValue({
+      message: (error as AppError)?.response?.data?.message,
+    });
+  }
+});
 
 const initialState: {
   memoryForm: MemoryCreateDTO | MemoryUpdateDTO | null;
@@ -165,7 +164,6 @@ const memorySlice = createSlice({
       if (index !== -1) {
         state.myMemories[index] = action.payload;
       }
-      // todo make reverse logic(my memories)
 
       const globalIndex = state.memories.findIndex((memory) => {
         return memory.id === action.payload.id;
