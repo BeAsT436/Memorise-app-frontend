@@ -160,8 +160,7 @@ const memorySlice = createSlice({
     });
     builder.addCase(updateMemoryThunk.fulfilled, (state, action) => {
       const index = state.myMemories.findIndex((memory) => {
-        // todo remove all _id
-        return memory.id === action.payload._id;
+        return memory.id === action.payload.id;
       });
       if (index !== -1) {
         state.myMemories[index] = action.payload;
@@ -169,11 +168,11 @@ const memorySlice = createSlice({
       // todo make reverse logic(my memories)
 
       const globalIndex = state.memories.findIndex((memory) => {
-        return memory.id === action.payload._id;
+        return memory.id === action.payload.id;
       });
       if (action.payload.local == "private") {
         state.memories = state.memories.filter((memory) => {
-          return memory.id !== action.payload._id;
+          return memory.id !== action.payload.id;
         });
       } else if (globalIndex !== -1) {
         state.memories[globalIndex] = action.payload;
