@@ -68,7 +68,7 @@ export const AuthForm = ({ isLogin }: Props) => {
       values = rest;
     }
 
-    console.log(!isLogin ? "register data:" : "login data:", values);
+    
     const fetchUrl = !isLogin
       ? baseURL + authURL.REGISTER
       : baseURL + authURL.LOGIN;

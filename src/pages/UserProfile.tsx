@@ -12,11 +12,7 @@ export const UserProfile = () => {
   const { users } = useSelector(selectUserState);
   const { memories } = useAppSelector(selectMemoriesState);
   const userMemories = memories.filter((memory) => memory.userId == id);
-  console.log("memories:", userMemories);
-  
-  // todo fix bug
   const user = users?.find((user) => user.id == id);
-
 
   return (
     <div className="p-5">
@@ -33,9 +29,10 @@ export const UserProfile = () => {
             Name: <span className="font-medium text-white">{user?.name}</span>
           </p>
           <p>
-            Email: <span className="font-medium text-white/80">{user?.email}</span>
+            Email:{" "}
+            <span className="font-medium text-white/80">{user?.email}</span>
           </p>
-          <SubscribeButton userId={user!.id}/>
+          <SubscribeButton userId={user!.id} />
         </div>
       </div>
 
