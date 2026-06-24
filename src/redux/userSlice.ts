@@ -3,7 +3,7 @@ import { RootState } from "./store";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getToken } from "@/utils/token";
 import axios from "axios";
-
+// todo reset state after logout
 interface UpdateDTO {
   name: string;
   email: string;

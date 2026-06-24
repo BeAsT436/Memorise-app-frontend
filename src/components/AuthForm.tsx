@@ -13,10 +13,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setAuthToken } from "@/redux/authSlice";
-import { toast } from "react-toastify";
-import { authURL, baseURL } from "@/consts/api-urls";
-import { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "@/consts/status_code";
+import { loginUser, registerUser} from "@/redux/authSlice";
 
 const loginSchema = z.object({
   email: z
@@ -62,42 +59,21 @@ export const AuthForm = ({ isLogin }: Props) => {
 
   async function onSubmit(values: z.infer<typeof schema>) {
     if (!isLogin) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...rest } = values as z.infer<
         typeof registerSchema
       >;
-      values = rest;
+      // register
+      // todo type
+      dispatch(registerUser(rest))
+    }else{
+      // login
+      // todo type
+      dispatch(loginUser(values))
     }
-
+    form.reset()
     
-    const fetchUrl = !isLogin
-      ? baseURL + authURL.REGISTER
-      : baseURL + authURL.LOGIN;
-
-    try {
-      // todo move fetch to authSlice and add response type
-      const res = await fetch(fetchUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      if (
-        res.status === UNAUTHORIZED ||
-        res.status === NOT_FOUND ||
-        res.status === BAD_REQUEST
-      ) {
-        toast.error(data.message);
-        return;
-      }
-
-      dispatch(setAuthToken(data));
-    } catch (error) {
-      console.log("error: ", JSON.stringify(error, null, 2));
-    } finally {
-      form.reset();
-    }
+    
   }
 
   return (
