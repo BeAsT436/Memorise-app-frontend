@@ -9,7 +9,7 @@ import { AppDispatch } from "@/redux/store";
 
 export const MainLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const handleOpenForm = () => {
+  const handleForm = () => {
     dispatch(openForm());
   };
 
@@ -23,7 +23,7 @@ export const MainLayout = () => {
       <header className="bg-blue-600 text-white p-4 flex justify-between items-center ">
         <img src={logo} alt="logo" className="h-24 w-24 rounded-full" />
 
-        <Button onClick={handleOpenForm}>+ add memory</Button>
+        <Button onClick={handleForm}>+ add memory</Button>
       </header>
       <div className="flex flex-1 ">
         {/* todo make adaptive design(hide sidebar into burger) */}
