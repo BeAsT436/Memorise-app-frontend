@@ -9,7 +9,7 @@ import { AppDispatch } from "@/redux/store";
 
 export const MainLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const handleOpen = () => {
+  const handleOpenForm = () => {
     dispatch(openForm());
   };
 
@@ -17,13 +17,12 @@ export const MainLayout = () => {
     dispatch(fetchMemories());
   }, [dispatch]);
 
-  
   return (
     <div className="flex flex-col min-h-screen">
       <header className="bg-blue-600 text-white p-4 flex justify-between items-center ">
         <img src={logo} alt="logo" className="h-24 w-24 rounded-full" />
 
-        <Button onClick={handleOpen}>+ add memory</Button>
+        <Button onClick={handleOpenForm}>+ add memory</Button>
       </header>
       <div className="flex flex-1 ">
         {/* todo make adaptive design(hide sidebar into burger) */}
