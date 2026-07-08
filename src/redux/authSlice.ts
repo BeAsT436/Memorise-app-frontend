@@ -7,9 +7,12 @@ import { AppError } from "@/types/AppError";
 import { toast } from "react-toastify";
 import { authURL, baseURL } from "@/consts/api-urls";
 
-interface AuthBody{email:string,password:string}
+interface AuthBody {
+  email: string;
+  password: string;
+}
 
-export const registerUser = createAsyncThunk<ActionPayload,AuthBody>(
+export const registerUser = createAsyncThunk<ActionPayload, AuthBody>(
   "auth/register",
   async (values, { rejectWithValue }) => {
     try {
@@ -63,9 +66,8 @@ interface ActionPayload {
 }
 
 function authSuccess(state: AuthState, payload: ActionPayload) {
-  console.log(payload.token);
-
   setToken(payload.token);
+  state.token = parseJWT(payload.token);
   state.isAuthenticated = true;
 }
 
