@@ -14,7 +14,7 @@ export const Private: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     if (!token?.userId) return;
     dispatch(getProfile(token.userId));
-  }, []);
+  }, [token, dispatch]);
 
   return isAuthenticated ? children : <Navigate to={"/"} />;
 };

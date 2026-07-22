@@ -1,9 +1,60 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { Token} from "@/types/user";
+import { Token } from "@/types/user";
 import { getToken, removeToken, setToken } from "@/utils/token";
 import { parseJWT } from "@/utils/parseJWT";
+import { AppError } from "@/types/AppError";
+import { toast } from "react-toastify";
+import { authURL, baseURL } from "@/consts/api-urls";
 
+interface AuthBody {
+  email: string;
+  password: string;
+}
+
+export const registerUser = createAsyncThunk<ActionPayload, AuthBody>(
+  "auth/register",
+  async (values, { rejectWithValue }) => {
+    try {
+      const res = await fetch(baseURL + authURL.REGISTER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      toast.error((error as AppError)?.response?.data?.message);
+      return rejectWithValue({
+        message: (error as AppError)?.response?.data?.message,
+      });
+    }
+  },
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (values, { rejectWithValue }) => {
+    try {
+      const res = await fetch(baseURL + authURL.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      toast.error((error as AppError)?.response?.data?.message);
+      return rejectWithValue({
+        message: (error as AppError)?.response?.data?.message,
+      });
+    }
+  },
+);
 
 interface AuthState {
   token: Token | null;
@@ -12,6 +63,12 @@ interface AuthState {
 interface ActionPayload {
   token: string;
   message: string;
+}
+
+function authSuccess(state: AuthState, payload: ActionPayload) {
+  setToken(payload.token);
+  state.token = parseJWT(payload.token);
+  state.isAuthenticated = true;
 }
 
 const initialState: AuthState = {
@@ -34,7 +91,7 @@ const authSlice = createSlice({
       if (token) {
         state.token = token;
         state.isAuthenticated = true;
-        setToken(action.payload.token)
+        setToken(action.payload.token);
       } else {
         state.token = null;
         state.isAuthenticated = false;
@@ -42,10 +99,19 @@ const authSlice = createSlice({
       }
     },
     logout: (state) => {
-      removeToken()
+      removeToken();
       state.token = null;
       state.isAuthenticated = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.fulfilled, (state, action) => {
+        authSuccess(state, action.payload);
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        authSuccess(state, action.payload);
+      });
   },
 });
 

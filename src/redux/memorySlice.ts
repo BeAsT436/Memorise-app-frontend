@@ -6,6 +6,7 @@ import { memoryURL } from "@/consts/api-urls";
 import { toast } from "react-toastify";
 import { AppError } from "@/types/AppError";
 
+// todo reset state after logout
 type Local = "private" | "public";
 
 export interface Memory {
