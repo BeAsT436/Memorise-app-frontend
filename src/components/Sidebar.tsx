@@ -30,6 +30,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               </li>
             ))}
           </ul>
+          {/* todo add logout button to the bottom of sidebar(links) */}
         </nav>
       </div>
     </>

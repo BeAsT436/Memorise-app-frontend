@@ -70,12 +70,12 @@ export const Profile: FC = () => {
         <div className="flex items-center space-x-4">
           <div>
             {isEditing ? (
-              <Button onClick={handleSave} className="rounded-full w-14 h-14">
+              <Button onClick={handleSave} className="w-8 h-8 md:w-16 md:h-16 rounded-full">
                 <CheckIcon />
               </Button>
             ) : (
               <Button
-                className="rounded-full w-14 h-14"
+                className="w-8 h-8 md:w-16 md:h-16 rounded-full"
                 onClick={() => {
                   setName(user.name);
                   setEmail(user.email);
@@ -87,7 +87,7 @@ export const Profile: FC = () => {
             )}
           </div>
           <img
-            className="w-16 h-16 rounded-full object-cover"
+            className="w-8 h-8 md:w-16 md:h-16 rounded-full object-cover"
             src={avatar}
             alt=""
           />
