@@ -66,9 +66,17 @@ interface ActionPayload {
 }
 
 function authSuccess(state: AuthState, payload: ActionPayload) {
-  setToken(payload.token);
-  state.token = parseJWT(payload.token);
-  state.isAuthenticated = true;
+  const token = parseJWT(payload.token);
+  if (token) {
+    state.token = token;
+    state.isAuthenticated = true;
+    setToken(payload.token);
+  } else {
+    state.token = null;
+    state.isAuthenticated = false;
+    console.log("error");
+  }
+  
 }
 
 const initialState: AuthState = {

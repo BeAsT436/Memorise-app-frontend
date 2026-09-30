@@ -13,6 +13,8 @@ export const UserProfile = () => {
   const { memories } = useAppSelector(selectMemoriesState);
   const userMemories = memories.filter((memory) => memory.userId == id);
   const user = users?.find((user) => user.id == id);
+  console.log("users: ",users);
+  
 
   return (
     <div className="p-5">

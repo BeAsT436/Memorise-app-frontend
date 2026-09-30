@@ -14,7 +14,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import { Users } from "./pages/Users";
 import { UserProfile } from "./pages/UserProfile";
 import { ToastContainer } from "react-toastify";
-
+import { MemoryDetail } from "./pages/MemoryDetail";
 
 const router = createBrowserRouter([
   {
@@ -61,18 +61,21 @@ const router = createBrowserRouter([
         path: "users",
         element: <Users />,
       },
-      {path: "users/:id",
-        element: <UserProfile/>
+      {
+        path: "users/:id",
+        element: <UserProfile />,
+      },
+      {
+        path: "memory/:id",
+        element:<MemoryDetail/>
       },
     ],
   },
 ]);
 
-
-
 createRoot(document.getElementById("root")!).render(
-    <Provider store={store}>
-      <RouterProvider router={router} />
-      <ToastContainer pauseOnFocusLoss draggable pauseOnHover />
-    </Provider>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+    <ToastContainer pauseOnFocusLoss draggable pauseOnHover />
+  </Provider>,
 );

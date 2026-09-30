@@ -8,7 +8,10 @@ import { AppError } from "@/types/AppError";
 
 // todo reset state after logout
 type Local = "private" | "public";
-
+export interface Author {
+  name?: string;
+  avatar?: string;
+}
 export interface Memory {
   userId: string;
   local: Local;
@@ -18,6 +21,8 @@ export interface Memory {
   createdAt: string;
   updatedAt: string;
   id: string;
+  
+  author: Author;
 }
 
 export interface MemoryUpdateDTO extends MemoryCreateDTO {
