@@ -7,6 +7,7 @@ import { fetchMemories, openForm } from "@/redux/memorySlice";
 import { useEffect, useState } from "react";
 import { AppDispatch } from "@/redux/store";
 import { Bars3Icon, PlusIcon } from "@heroicons/react/24/outline";
+import { getAllUsers } from "@/redux/userSlice";
 
 export const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -17,6 +18,7 @@ export const MainLayout = () => {
 
   useEffect(() => {
     dispatch(fetchMemories());
+    dispatch(getAllUsers());
   }, [dispatch]);
 
   return (

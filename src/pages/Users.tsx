@@ -1,19 +1,15 @@
 import { SubscribeButton } from "@/components/SubscribeButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { baseAvatar } from "@/consts/baseAvatar";
-import { AppDispatch, useAppSelector } from "@/redux/store";
-import { getAllUsers, selectUserState } from "@/redux/userSlice";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppSelector } from "@/redux/store";
+import { selectUserState } from "@/redux/userSlice";
+
+import { useSelector } from "react-redux";
 import { Link } from "react-router";
 
 export const Users = () => {
   const { users } = useSelector(selectUserState);
-  const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, [dispatch]);
   const currentUserID = useAppSelector((state) => state.user.user?.id);
   const filteredUsers =
     users?.filter((user) => user.id !== currentUserID) || [];
@@ -28,7 +24,9 @@ export const Users = () => {
                 <img src={user.avatar || baseAvatar} alt="avatar" />
               </div>
               <div>
-                <div className=" text-lg font-semibold"><Link to={`/users/${user.id}`}>{user.name}</Link></div>
+                <div className=" text-lg font-semibold">
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </div>
                 <div className="text-xs text-gray-700">{user.email}</div>
               </div>
             </div>

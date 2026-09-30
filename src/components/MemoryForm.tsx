@@ -195,7 +195,6 @@ export const MemoryForm = () => {
           {form.getValues().img && (
             <img alt="preview" src={form.getValues().img} />
           )}
-          {/* <Button type="submit">add memory</Button> */}
           <div>
             <Button onClick={handleClose} type="button">
               close
