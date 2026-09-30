@@ -1,4 +1,4 @@
-import { selectAuthState } from "@/redux/authSlice";
+import { selectCurrentUserId } from "@/redux/authSlice";
 import {
   Memory,
   changeLocalMemoryThunk,
@@ -19,33 +19,22 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
 import { Modal } from "./Modal";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { defaultImg } from "@/consts/baseMemoryIMG";
-// import { defaultAuthorName } from "@/consts/defaultAuthorName";
-// import { userURL } from "@/consts/api-urls";
-// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { isValidUrl } from "@/utils/isValidUrl";
+
 interface CardProps {
   memory: Memory;
 }
 
-const isValidUrl = (url: string): boolean => {
-  try {
-    new URL(url);
-    return true;
-  } catch (_error) {
-    return false;
-  }
-};
-
 export const Card: React.FC<CardProps> = ({ memory }) => {
-  const { token } = useSelector(selectAuthState);
-  const navigate = useNavigate();
+  const currentUserId = useSelector(selectCurrentUserId);
   const { img, title, desc, id, createdAt, local, author, userId } = memory;
 
   const [open, setOpen] = useState(false);
 
   const validUrl = isValidUrl(img) ? img : defaultImg;
-  const isOwner = token?.userId === memory.userId;
+  const isOwner = currentUserId === memory.userId;
   const dispatch = useDispatch<AppDispatch>();
   //todo add modal window to confirm deleting
 
@@ -64,11 +53,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
   const handleCloseModal = () => setOpen(false);
 
   return (
-    <ShadcnCard
-      onClick={() => navigate(`/memory/${id}`)}
-      className="py-0 relative"
-      key={memory.id}
-    >
+    <ShadcnCard className="py-0 relative" key={memory.id}>
       <img
         src={validUrl}
         alt="river"
@@ -76,10 +61,8 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
       />
       {isOwner && (
         <div className="absolute right-1 top-1 bg-black bg-opacity-40 p-1 rounded-md flex gap-1">
-          {/* todo prevent opening detail page after clicking*/}
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               setOpen(true);
             }}
             className=" bg-black bg-opacity-5"
@@ -89,8 +72,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
           </Button>
           <Button
             className=" bg-black bg-opacity-5 text-lg"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               handleOpenEditForm();
             }}
             size={"sm"}
@@ -102,22 +84,20 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
       <CardHeader>
         <CardDescription className="font-semibold">
           <span className="font-bold">Owner:</span>{" "}
-          {/* {author?.name || defaultAuthorName} */}
-          {/* todo add user.id in Link */}
-          <Link onClick={(e)=>{e.stopPropagation()}} to={`/users/${userId}`}>{author?.name}</Link>
+          <Link to={`/users/${userId}`}>{author?.name}</Link>
         </CardDescription>
-        <CardTitle>{title}</CardTitle>
+        
+        <CardTitle><Link to={`/memory/${id}`}>{title}</Link></CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-600 ">{desc}</p>
+        <p className="text-gray-600 "><Link to={`/memory/${id}`}>{desc}</Link></p>
         <p className="text-sm text-gray-500 mt-2 text-right">
           created: {format(new Date(createdAt), "PPP")}
         </p>
         {isOwner && (
           <Button
             className="my-5"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               handleChangeLocal(id);
             }}
           >
