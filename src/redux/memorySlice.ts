@@ -7,8 +7,11 @@ import { toast } from "react-toastify";
 import { AppError } from "@/types/AppError";
 
 // todo reset state after logout
-type Local = "private" | "public";
-
+export type Local = "private" | "public";
+export interface Author {
+  name?: string;
+  avatar?: string;
+}
 export interface Memory {
   userId: string;
   local: Local;
@@ -18,6 +21,8 @@ export interface Memory {
   createdAt: string;
   updatedAt: string;
   id: string;
+
+  author: Author;
 }
 
 export interface MemoryUpdateDTO extends MemoryCreateDTO {
@@ -92,10 +97,10 @@ type ChangeLocalMemoryResponse = { local: Local; id: string };
 
 export const changeLocalMemoryThunk = createAsyncThunk<
   ChangeLocalMemoryResponse,
-  string
->("memory/local", async (id: string, { rejectWithValue }) => {
+  { id: string; local: Local }
+>("memory/local", async ({ id, local }, { rejectWithValue }) => {
   try {
-    const res = await api.put(memoryURL.LOCAL(id));
+    const res = await api.put(memoryURL.LOCAL(id), { local });
 
     return { local: res.data, id };
   } catch (error) {
