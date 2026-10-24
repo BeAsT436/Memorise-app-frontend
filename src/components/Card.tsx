@@ -14,6 +14,7 @@ import { defaultImg } from "@/consts/baseMemoryIMG";
 import { isValidUrl } from "@/utils/isValidUrl";
 import { MemoryOwnerActions } from "./MemoryOwnerActions";
 import { TogglePrivacy } from "./TogglePrivacy";
+import { en } from "@/locales/en";
 
 interface CardProps {
   memory: Memory;
@@ -38,7 +39,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
       {isOwner && <MemoryOwnerActions memory={memory} />}
       <CardHeader>
         <CardDescription className="font-semibold">
-          <span className="font-bold">Owner:</span>{" "}
+          <span className="font-bold">{en.card.owner}:</span>{" "}
           <Link to={`/users/${userId}`}>{author?.name}</Link>
         </CardDescription>
 
@@ -51,7 +52,7 @@ export const Card: React.FC<CardProps> = ({ memory }) => {
           <Link to={`/memory/${id}`}>{desc}</Link>
         </p>
         <p className="text-sm text-gray-500 mt-2 text-right">
-          created: {format(new Date(createdAt), "PPP")}
+          {en.card.created}: {format(new Date(createdAt), "PPP")}
         </p>
         {isOwner && <TogglePrivacy memoryId={id} local={local} />}
       </CardContent>
